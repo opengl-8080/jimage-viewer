@@ -1,12 +1,14 @@
 package jimgv.controller;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -179,21 +181,32 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void onLeft() {
-        if (this.book == null) {
+    public void onLeft(Event event) {
+        if (this.book == null || !this.isPrimaryMouseClick(event)) {
             return;
         }
+
         this.book.nextPage();
         this.refreshImage();
     }
 
     @FXML
-    public void onRight() {
-        if (this.book == null) {
+    public void onRight(Event event) {
+        if (this.book == null || !this.isPrimaryMouseClick(event)) {
             return;
         }
+
         this.book.previousPage();
         this.refreshImage();
+    }
+
+    private boolean isPrimaryMouseClick(Event event) {
+        if (!(event instanceof MouseEvent)) {
+            return false;
+        }
+
+        MouseEvent mouseEvent = (MouseEvent) event;
+        return mouseEvent.getButton() == MouseButton.PRIMARY;
     }
 
     @Override
