@@ -23,12 +23,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Main.stage = primaryStage;
+
         Parent fxml = FXMLLoader.load(Main.class.getResource("/fxml/main.fxml"));
 
         Scene scene = new Scene(fxml);
         primaryStage.setScene(scene);
-        Main.stage = primaryStage;
         Main.stage.setTitle(TITLE_BASE);
+        primaryStage.setFullScreenExitHint("");
 
         primaryStage.show();
     }

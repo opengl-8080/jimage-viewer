@@ -1,13 +1,18 @@
 package jimgv.controller;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import jimgv.Main;
 import jimgv.model.Book;
 import jimgv.model.BookConfigMap;
@@ -21,6 +26,10 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
+    @FXML
+    private BorderPane borderPane;
+    @FXML
+    private MenuBar menuBar;
     @FXML
     private GridPane imageParentPane;
     @FXML
@@ -111,14 +120,6 @@ public class MainController implements Initializable {
         this.book.getLeft().ifPresent(this::setLeftImage);
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        this.leftImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
-        this.rightImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
-        this.startWithLeftPageMenuItem.setDisable(true);
-        this.repository = new BookRepository(BookConfigMap.getDefault());
-    }
-
     @FXML
     public void onClickStartWithLeftPage() {
         if (this.book == null) {
@@ -132,11 +133,59 @@ public class MainController implements Initializable {
         this.refreshImage();
     }
 
+    @FXML
+    public void onClickFullScreen() {
+        Stage stage = Main.getStage();
+        boolean fullScreen = !stage.isFullScreen();
+        Main.getStage().setFullScreen(fullScreen);
+    }
+
+    @FXML
+    public void onMouseMoved(MouseEvent event) {
+        if (Main.getStage().isFullScreen()) {
+            if (event.getY() == 0.0) {
+                this.showMenuBar();
+            }
+        }
+    }
+
+    @FXML
+    public void onMouseExitedFromMenuBar() {
+        if (Main.getStage().isFullScreen()) {
+            this.hideMenuBar();
+        }
+    }
+
+    private void hideMenuBar() {
+        this.borderPane.setTop(null);
+    }
+
+    private void showMenuBar() {
+        this.borderPane.setTop(this.menuBar);
+    }
+
     private void setStartWithLeftPageMenuItemLabel() {
         if (this.book.isStartWithLeft()) {
             this.startWithLeftPageMenuItem.setText("左から開始 : ON");
         } else {
             this.startWithLeftPageMenuItem.setText("左から開始 : OFF");
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.leftImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
+        this.rightImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
+        this.startWithLeftPageMenuItem.setDisable(true);
+        this.repository = new BookRepository(BookConfigMap.getDefault());
+
+        ReadOnlyBooleanProperty fullScreenProperty = Main.getStage().fullScreenProperty();
+        fullScreenProperty.addListener((observable, oldValue, isFullScreen) -> {
+            if (isFullScreen) {
+                hideMenuBar();
+            } else {
+                showMenuBar();
+            }
+        });
     }
 }

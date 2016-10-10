@@ -7,9 +7,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jimgv.controller.MainController">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#onMouseExitedFromMenuBar" onMouseMoved="#onMouseMoved" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: lightgray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jimgv.controller.MainController">
    <top>
-      <MenuBar BorderPane.alignment="CENTER">
+      <MenuBar fx:id="menuBar" onMouseExited="#onMouseExitedFromMenuBar" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="ファイル">
             <items>
@@ -23,6 +23,15 @@
               <items>
                 <MenuItem fx:id="startWithLeftPageMenuItem" mnemonicParsing="false" onAction="#onClickStartWithLeftPage" text="左ページ開始 : OFF" />
               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="表示">
+               <items>
+                <MenuItem mnemonicParsing="false" onAction="#onClickFullScreen" text="全画面表示切替">
+                     <accelerator>
+                        <KeyCodeCombination alt="ANY" code="F11" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+               </items>
             </Menu>
         </menus>
       </MenuBar>
