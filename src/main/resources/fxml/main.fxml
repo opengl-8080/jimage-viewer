@@ -19,6 +19,11 @@
                      </accelerator></MenuItem>
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="編集">
+              <items>
+                <MenuItem fx:id="startWithLeftPageMenuItem" mnemonicParsing="false" onAction="#onClickStartWithLeftPage" text="左ページ開始 : OFF" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>

@@ -17,46 +17,7 @@ public class BookTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    private Book book = new Book();
-
-    @Test
-    public void ディレクトリが設定されて有効な状態になっているか確認できる_設定されていない場合() throws Exception {
-        // exercise, verify
-        assertThat(book.isInitialized()).isFalse();
-    }
-
-    @Test
-    public void ディレクトリが設定されて有効な状態になっているか確認できる_設定されている場合() throws Exception {
-        // setup
-        book.setDirectory(folder.getRoot());
-
-        // exercise, verify
-        assertThat(book.isInitialized()).isTrue();
-    }
-
-    @Test
-    public void ディレクトリを設定していない状態で次のページに遷移しようとするとエラー() throws Exception {
-        assertThatThrownBy(() -> book.nextPage())
-                .isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    public void ディレクトリを設定していない状態で前のページに遷移しようとするとエラー() throws Exception {
-        assertThatThrownBy(() -> book.previousPage())
-                .isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    public void ディレクトリを設定していない状態で右ページを取得しとうよしたらエラー() throws Exception {
-        assertThatThrownBy(() -> book.getRight())
-                .isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    public void ディレクトリを設定していない状態で左ページを取得しとうよしたらエラー() throws Exception {
-        assertThatThrownBy(() -> book.getLeft())
-                .isInstanceOf(IllegalStateException.class);
-    }
+    private Book book;
 
     @Test
     public void ディレクトリは無視される() throws Exception {
@@ -64,7 +25,7 @@ public class BookTest {
         folder.newFile("001.jpg");
         folder.newFolder("foo");
 
-        book.setDirectory(folder.getRoot());
+        book = new Book(folder.getRoot());
 
         // exercise, verify
         assertThat(book.getRight()).as("右").hasValue(expectedFile("001.jpg"));
@@ -75,7 +36,7 @@ public class BookTest {
     public void 現在の右ページのインデックス値を取得できる_初期状態() throws Exception {
         // setup
         folder.newFile("001.jpg");
-        book.setDirectory(folder.getRoot());
+        book = new Book(folder.getRoot());
 
         // exercise, verify
         assertThat(book.getRightIndex()).isEqualTo(0);
@@ -87,39 +48,18 @@ public class BookTest {
         folder.newFile("001.jpg");
         folder.newFile("002.jpg");
         folder.newFile("003.jpg");
-        book.setDirectory(folder.getRoot());
+        book = new Book(folder.getRoot());
         book.nextPage();
 
         // exercise, verify
         assertThat(book.getRightIndex()).isEqualTo(2);
     }
 
-    @Test
-    public void フォルダを設定しなおすと状態がリセットされる() throws Exception {
-        // setup
-        folder.newFolder("foo");
-        folder.newFile("foo/001.jpg");
-        folder.newFile("foo/002.jpg");
-        folder.newFile("foo/003.jpg");
-        book.setDirectory(new File(folder.getRoot(), "foo"));
-        book.nextPage();
-
-        // exercise
-        folder.newFolder("bar");
-        folder.newFile("bar/001.jpg");
-        folder.newFile("bar/002.jpg");
-        book.setDirectory(new File(folder.getRoot(), "bar"));
-
-        // verify
-        assertThat(book.size()).as("size").isEqualTo(2);
-        assertThat(book.getRightIndex()).as("rightIndex").isEqualTo(0);
-    }
-
     public class ファイルが１つも存在しないディレクトリが設定された場合 {
 
         @Before
         public void setUp() throws Exception {
-            book.setDirectory(folder.getRoot());
+            book = new Book(folder.getRoot());
         }
 
         @Test
@@ -145,7 +85,7 @@ public class BookTest {
         @Before
         public void setUp() throws Exception {
             folder.newFile("001.jpg");
-            book.setDirectory(folder.getRoot());
+            book = new Book(folder.getRoot());
         }
 
         @Test
@@ -199,7 +139,7 @@ public class BookTest {
         public void setUp() throws Exception {
             folder.newFile("001.jpg");
             folder.newFile("002.jpg");
-            book.setDirectory(folder.getRoot());
+            book = new Book(folder.getRoot());
         }
 
         @Test
@@ -231,6 +171,16 @@ public class BookTest {
         }
 
         @Test
+        public void 前のページに遷移しても_左右のページは変化しない() throws Exception {
+            // exercise
+            book.previousPage();
+
+            // verify
+            assertThat(book.getRight()).as("右").hasValue(expectedFile("001.jpg"));
+            assertThat(book.getLeft()).as("左").hasValue(expectedFile("002.jpg"));
+        }
+
+        @Test
         public void 総ページ数は2() throws Exception {
             // exercise, verify
             assertThat(book.size()).isEqualTo(2);
@@ -244,7 +194,7 @@ public class BookTest {
             folder.newFile("001.jpg");
             folder.newFile("002.jpg");
             folder.newFile("003.jpg");
-            book.setDirectory(folder.getRoot());
+            book = new Book(folder.getRoot());
         }
 
         @Test
@@ -274,7 +224,7 @@ public class BookTest {
             folder.newFile("002.jpg");
             folder.newFile("003.jpg");
             folder.newFile("004.jpg");
-            book.setDirectory(folder.getRoot());
+            book = new Book(folder.getRoot());
         }
 
         @Test
@@ -305,6 +255,46 @@ public class BookTest {
             assertThat(book.getRight()).as("右").hasValue(expectedFile("001.jpg"));
             assertThat(book.getLeft()).as("左").hasValue(expectedFile("002.jpg"));
         }
+    }
+
+    public class 開始ページに左を設定した場合 {
+        @Before
+        public void setUp() throws Exception {
+            folder.newFile("001.jpg");
+            folder.newFile("002.jpg");
+            folder.newFile("003.jpg");
+            book = new Book(folder.getRoot());
+            book.setStartWithLeft(true);
+        }
+
+        @Test
+        public void 初期状態では右ページが空になる() throws Exception {
+            // exercise, verify
+            assertThat(book.getRight()).isEmpty();
+        }
+
+        @Test
+        public void 初期状態では左ページが１つ目のファイルになる() throws Exception {
+            // exercise, verify
+            assertThat(book.getLeft()).hasValue(expectedFile("001.jpg"));
+        }
+    }
+
+    @Test
+    public void 開始ページを左にしてから次ページに移動して前ページに戻ったときのインデックス値チェック() throws Exception {
+        // setup
+        folder.newFile("001.jpg");
+        folder.newFile("002.jpg");
+        book = new Book(folder.getRoot());
+
+        // exercise
+        book.setStartWithLeft(true);
+        book.nextPage();
+        book.previousPage();
+
+        // verify
+        assertThat(book.getRight()).as("右").isEmpty();
+        assertThat(book.getLeft()).as("左").hasValue(expectedFile("001.jpg"));
     }
 
     private File expectedFile(String name) {

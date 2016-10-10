@@ -8,13 +8,17 @@ public class Book {
 
     private File directory;
     private File[] files;
-    private int currentRightIndex;
+    private BookPages pages = new BookPages();
 
-    public void setDirectory(File directory) {
+    public Book(File directory) {
         this.directory = directory;
         this.files = this.directory.listFiles(File::isFile);
         Arrays.sort(this.files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
-        this.currentRightIndex = 0;
+    }
+
+    public boolean switchStartWithLeft() {
+        this.pages.switchStartWithLeft();
+        return this.pages.isStartWithLeft();
     }
 
     public Optional<File> getRight() {
@@ -22,11 +26,11 @@ public class Book {
             throw new IllegalStateException("ディレクトリが設定されていません");
         }
 
-        if (this.files.length == 0) {
+        if (this.files.length == 0 || this.pages.getRightIndex() < 0) {
             return Optional.empty();
         }
 
-        return Optional.of(this.files[this.currentRightIndex]);
+        return Optional.of(this.files[this.pages.getRightIndex()]);
     }
 
     public Optional<File> getLeft() {
@@ -34,11 +38,11 @@ public class Book {
             throw new IllegalStateException("ディレクトリが設定されていません");
         }
 
-        if (this.files.length <= this.currentRightIndex + 1) {
+        if (this.files.length <= this.pages.getLeftIndex()) {
             return Optional.empty();
         }
 
-        return Optional.of(this.files[this.currentRightIndex + 1]);
+        return Optional.of(this.files[this.pages.getLeftIndex()]);
     }
 
     public void nextPage() {
@@ -46,8 +50,10 @@ public class Book {
             throw new IllegalStateException("ディレクトリが設定されていません");
         }
 
-        if (this.currentRightIndex + 2 < this.files.length) {
-            this.currentRightIndex += 2;
+        this.pages.nextPage();
+
+        if (this.files.length <= this.pages.getRightIndex()) {
+            this.pages.previousPage();
         }
     }
 
@@ -56,20 +62,22 @@ public class Book {
             throw new IllegalStateException("ディレクトリが設定されていません");
         }
 
-        if (0 <= this.currentRightIndex - 2) {
-            this.currentRightIndex -= 2;
+        this.pages.previousPage();
+
+        if (this.pages.getRightIndex() < -1) {
+            this.pages.nextPage();
         }
     }
 
     int getRightIndex() {
-        return this.currentRightIndex;
+        return this.pages.getRightIndex();
     }
 
     int size() {
         return this.files.length;
     }
 
-    public boolean isInitialized() {
-        return this.directory != null;
+    void setStartWithLeft(boolean startWithLeft) {
+        this.pages.setStartWithLeft(startWithLeft);
     }
 }

@@ -1,7 +1,10 @@
 package jimgv.controller;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
@@ -23,8 +26,10 @@ public class MainController implements Initializable {
     private ImageView leftImage;
     @FXML
     private ImageView rightImage;
+    @FXML
+    private MenuItem startWithLeftPageMenuItem;
 
-    private Book book = new Book();
+    private Book book;
 
     @FXML
     public void onOpenFolder() {
@@ -35,10 +40,11 @@ public class MainController implements Initializable {
 
         if (directory != null) {
             Main.setTitle(directory.getName());
-            this.book.setDirectory(directory);
+            this.book = new Book(directory);
             this.refreshImage();
             Configuration.getInstance().setInitialDirectory(directory);
             Configuration.getInstance().save();
+            this.startWithLeftPageMenuItem.setDisable(false);
         }
     }
 
@@ -57,7 +63,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void onImageScroll(ScrollEvent event) {
-        if (!this.book.isInitialized()) {
+        if (this.book == null) {
             return;
         }
 
@@ -92,5 +98,20 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.leftImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
         this.rightImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
+        this.startWithLeftPageMenuItem.setDisable(true);
+    }
+
+    @FXML
+    public void onClickStartWithLeftPage() {
+        if (this.book == null) {
+            return;
+        }
+
+        boolean startWithLeft = this.book.switchStartWithLeft();
+
+        String text = this.startWithLeftPageMenuItem.getText();
+        this.startWithLeftPageMenuItem.setText(text.replaceAll(" : .*", (startWithLeft ? " : ON" : " : OFF")));
+
+        this.refreshImage();
     }
 }
