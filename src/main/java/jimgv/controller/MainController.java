@@ -1,7 +1,5 @@
 package jimgv.controller;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuItem;
@@ -12,10 +10,13 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import jimgv.Main;
 import jimgv.model.Book;
+import jimgv.model.BookConfigMap;
+import jimgv.model.BookRepository;
 import jimgv.model.Configuration;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -30,22 +31,38 @@ public class MainController implements Initializable {
     private MenuItem startWithLeftPageMenuItem;
 
     private Book book;
+    private BookRepository repository;
+    private Configuration config = Configuration.getInstance();
 
     @FXML
     public void onOpenFolder() {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("フォルダを選択");
-        chooser.setInitialDirectory(Configuration.getInstance().getInitialDirectory());
+        chooser.setInitialDirectory(this.config.getInitialDirectory());
         File directory = chooser.showDialog(Main.getStage());
 
-        if (directory != null) {
-            Main.setTitle(directory.getName());
-            this.book = new Book(directory);
-            this.refreshImage();
-            Configuration.getInstance().setInitialDirectory(directory);
-            Configuration.getInstance().save();
-            this.startWithLeftPageMenuItem.setDisable(false);
+        if (directory == null) {
+            return;
         }
+
+        Optional<Book> book = this.repository.find(directory);
+
+        if (book.isPresent()) {
+            this.book = book.get();
+        } else {
+            this.book = new Book(directory);
+            this.repository.save(this.book);
+        }
+
+        Main.setTitle(directory.getName());
+
+        this.config.setInitialDirectory(directory);
+        this.config.save();
+
+        this.setStartWithLeftPageMenuItemLabel();
+        this.startWithLeftPageMenuItem.setDisable(false);
+
+        this.refreshImage();
     }
 
     private void setRightImage(File file) {
@@ -99,6 +116,7 @@ public class MainController implements Initializable {
         this.leftImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
         this.rightImage.fitHeightProperty().bind(this.imageParentPane.heightProperty());
         this.startWithLeftPageMenuItem.setDisable(true);
+        this.repository = new BookRepository(BookConfigMap.getDefault());
     }
 
     @FXML
@@ -107,11 +125,18 @@ public class MainController implements Initializable {
             return;
         }
 
-        boolean startWithLeft = this.book.switchStartWithLeft();
-
-        String text = this.startWithLeftPageMenuItem.getText();
-        this.startWithLeftPageMenuItem.setText(text.replaceAll(" : .*", (startWithLeft ? " : ON" : " : OFF")));
+        this.book.switchStartWithLeft();
+        this.repository.save(this.book);
+        this.setStartWithLeftPageMenuItemLabel();
 
         this.refreshImage();
+    }
+
+    private void setStartWithLeftPageMenuItemLabel() {
+        if (this.book.isStartWithLeft()) {
+            this.startWithLeftPageMenuItem.setText("左から開始 : ON");
+        } else {
+            this.startWithLeftPageMenuItem.setText("左から開始 : OFF");
+        }
     }
 }

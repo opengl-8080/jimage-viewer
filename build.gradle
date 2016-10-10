@@ -9,7 +9,16 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    provided
+}
+
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+
 dependencies {
+    provided 'org.projectlombok:lombok:1.16.10'
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.5.2'
     testCompile 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.1'

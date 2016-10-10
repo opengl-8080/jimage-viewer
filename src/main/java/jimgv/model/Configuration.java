@@ -10,16 +10,30 @@ import java.io.UncheckedIOException;
 import java.util.Properties;
 
 public class Configuration {
-    private static final File FILE_PATH = new File("./config/jimg.xml");
+    private static final File CONFIG_DIR_PATH = new File("./config");
+    private static final File FILE_PATH = new File(CONFIG_DIR_PATH, "jimg.xml");
     private static final Configuration instance = new Configuration();
+    private static Configuration testInstance;
 
     public static Configuration getInstance() {
+        if (Configuration.testInstance != null) {
+            return Configuration.testInstance;
+        }
+
+        if (!Configuration.instance.isLoaded()) {
+            Configuration.instance.load();
+        }
+
         return Configuration.instance;
+    }
+
+    public static void setTestInstance(Configuration testInstance) {
+        Configuration.testInstance = testInstance;
     }
 
     private Properties prop;
 
-    private Configuration() {
+    private void load() {
         prop = new Properties();
 
         if (!FILE_PATH.exists()) {
@@ -31,6 +45,15 @@ public class Configuration {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private boolean isLoaded() {
+        return this.prop != null;
+    }
+
+    public File getBooksConfigDirectory() {
+        String value = this.prop.getProperty("books-config-dir", new File(CONFIG_DIR_PATH, "books-conf").getPath());
+        return new File(value);
     }
 
     public File getInitialDirectory() {
@@ -59,6 +82,10 @@ public class Configuration {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public File getConfigDir() {
+        return CONFIG_DIR_PATH;
     }
 
     private void createDirectoriesIfNotExists() {
