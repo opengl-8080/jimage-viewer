@@ -22,10 +22,6 @@ public class Book {
     }
 
     public Optional<File> getRight() {
-        if (this.directory == null) {
-            throw new IllegalStateException("ディレクトリが設定されていません");
-        }
-
         if (this.files.length == 0 || this.pages.getRightIndex() < 0) {
             return Optional.empty();
         }
@@ -34,10 +30,6 @@ public class Book {
     }
 
     public Optional<File> getLeft() {
-        if (this.directory == null) {
-            throw new IllegalStateException("ディレクトリが設定されていません");
-        }
-
         if (this.files.length <= this.pages.getLeftIndex()) {
             return Optional.empty();
         }
@@ -46,10 +38,6 @@ public class Book {
     }
 
     public void nextPage() {
-        if (this.directory == null) {
-            throw new IllegalStateException("ディレクトリが設定されていません");
-        }
-
         this.pages.nextPage();
 
         if (this.files.length <= this.pages.getRightIndex()) {
@@ -58,10 +46,6 @@ public class Book {
     }
 
     public void previousPage() {
-        if (this.directory == null) {
-            throw new IllegalStateException("ディレクトリが設定されていません");
-        }
-
         this.pages.previousPage();
 
         if (this.pages.getRightIndex() < -1) {
