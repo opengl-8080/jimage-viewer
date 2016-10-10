@@ -192,8 +192,24 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void onLeft(Event event) {
+    public void onMouseClickOnGridPane(MouseEvent event) {
         if (this.book == null || !this.isPrimaryMouseClick(event)) {
+            return;
+        }
+
+        double x = event.getX();
+        double width = this.imageParentPane.getWidth();
+
+        if (x < (width / 2.0)) {
+            this.onLeft();
+        } else {
+            this.onRight();
+        }
+    }
+
+    @FXML
+    public void onLeft() {
+        if (this.book == null) {
             return;
         }
 
@@ -202,8 +218,8 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void onRight(Event event) {
-        if (this.book == null || !this.isPrimaryMouseClick(event)) {
+    public void onRight() {
+        if (this.book == null) {
             return;
         }
 
@@ -269,16 +285,14 @@ public class MainController implements Initializable {
 
     @FXML
     public void onMouseMovedOnImage() {
-        this.leftImage.setCursor(Cursor.HAND);
-        this.rightImage.setCursor(Cursor.HAND);
+        this.imageParentPane.setCursor(Cursor.HAND);
 
         if (this.future != null) {
             this.future.cancel(true);
         }
 
         this.future = executorService.schedule(() -> {
-            this.leftImage.setCursor(Cursor.NONE);
-            this.rightImage.setCursor(Cursor.NONE);
+            this.imageParentPane.setCursor(Cursor.NONE);
         }, 1500, TimeUnit.MILLISECONDS);
     }
 }
