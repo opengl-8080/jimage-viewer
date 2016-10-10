@@ -4,6 +4,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -25,6 +26,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainController implements Initializable {
 
@@ -255,5 +262,23 @@ public class MainController implements Initializable {
                 this.repository.save(this.book);
             }
         });
+    }
+
+    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private Future<?> future;
+
+    @FXML
+    public void onMouseMovedOnImage() {
+        this.leftImage.setCursor(Cursor.HAND);
+        this.rightImage.setCursor(Cursor.HAND);
+
+        if (this.future != null) {
+            this.future.cancel(true);
+        }
+
+        this.future = executorService.schedule(() -> {
+            this.leftImage.setCursor(Cursor.NONE);
+            this.rightImage.setCursor(Cursor.NONE);
+        }, 1500, TimeUnit.MILLISECONDS);
     }
 }
