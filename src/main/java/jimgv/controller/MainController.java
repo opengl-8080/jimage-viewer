@@ -101,18 +101,6 @@ public class MainController implements Initializable {
         this.refreshImage();
     }
 
-    @FXML
-    public void onLeftImageClicked() {
-        this.book.nextPage();
-        this.refreshImage();
-    }
-
-    @FXML
-    public void onRightImageClicked() {
-        this.book.previousPage();
-        this.refreshImage();
-    }
-
     private void refreshImage() {
         this.rightImage.setImage(null);
         this.leftImage.setImage(null);
@@ -173,7 +161,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void onClickHome() {
+    public void onHome() {
         if (this.book == null) {
             return;
         }
@@ -182,11 +170,29 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void onClickEnd() {
+    public void onEnd() {
         if (this.book == null) {
             return;
         }
         this.book.end();
+        this.refreshImage();
+    }
+
+    @FXML
+    public void onLeft() {
+        if (this.book == null) {
+            return;
+        }
+        this.book.nextPage();
+        this.refreshImage();
+    }
+
+    @FXML
+    public void onRight() {
+        if (this.book == null) {
+            return;
+        }
+        this.book.previousPage();
         this.refreshImage();
     }
 
