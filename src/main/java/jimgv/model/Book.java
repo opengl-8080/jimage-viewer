@@ -46,6 +46,14 @@ public class Book {
         this.pages.previousPage();
     }
 
+    public void home() {
+        this.pages.home();
+    }
+
+    public void end() {
+        this.pages.end();
+    }
+
     int getRightIndex() {
         return this.pages.getRightIndex();
     }

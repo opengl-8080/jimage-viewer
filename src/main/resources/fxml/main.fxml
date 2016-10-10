@@ -31,6 +31,16 @@
                         <KeyCodeCombination alt="ANY" code="F11" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#onClickHome" text="最初のページへ">
+                     <accelerator>
+                        <KeyCodeCombination alt="ANY" code="HOME" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#onClickEnd" text="最後のページへ">
+                     <accelerator>
+                        <KeyCodeCombination alt="ANY" code="END" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
                </items>
             </Menu>
         </menus>

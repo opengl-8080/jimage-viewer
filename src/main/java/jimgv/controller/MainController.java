@@ -133,6 +133,14 @@ public class MainController implements Initializable {
         this.refreshImage();
     }
 
+    private void setStartWithLeftPageMenuItemLabel() {
+        if (this.book.isStartWithLeft()) {
+            this.startWithLeftPageMenuItem.setText("左から開始 : ON");
+        } else {
+            this.startWithLeftPageMenuItem.setText("左から開始 : OFF");
+        }
+    }
+
     @FXML
     public void onClickFullScreen() {
         Stage stage = Main.getStage();
@@ -164,12 +172,22 @@ public class MainController implements Initializable {
         this.borderPane.setTop(this.menuBar);
     }
 
-    private void setStartWithLeftPageMenuItemLabel() {
-        if (this.book.isStartWithLeft()) {
-            this.startWithLeftPageMenuItem.setText("左から開始 : ON");
-        } else {
-            this.startWithLeftPageMenuItem.setText("左から開始 : OFF");
+    @FXML
+    public void onClickHome() {
+        if (this.book == null) {
+            return;
         }
+        this.book.home();
+        this.refreshImage();
+    }
+
+    @FXML
+    public void onClickEnd() {
+        if (this.book == null) {
+            return;
+        }
+        this.book.end();
+        this.refreshImage();
     }
 
     @Override

@@ -14,6 +14,8 @@ public class BookPagesTest {
 
     public class デフォルト {
 
+
+
         @Test
         public void 生成直後は右ページが0で左ページが1() throws Exception {
             // exercise, verify
@@ -90,6 +92,33 @@ public class BookPagesTest {
             // verify
             assertThat(pages.getRightIndex()).as("after right").isEqualTo(2);
             assertThat(pages.getLeftIndex()).as("after left").isEqualTo(3);
+        }
+
+        @Test
+        public void 先頭に戻れる() throws Exception {
+            // setup
+            pages.nextPage();
+            pages.nextPage();
+
+            // exercise
+            pages.home();
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(0);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(1);
+        }
+
+        @Test
+        public void 末尾に移動できる() throws Exception {
+            // setup
+            pages = new BookPages(4);
+
+            // exercise
+            pages.end();
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(2);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(3);
         }
     }
 
@@ -179,6 +208,34 @@ public class BookPagesTest {
             // verify
             assertThat(pages.getRightIndex()).as("after right").isEqualTo(3);
             assertThat(pages.getLeftIndex()).as("after left").isEqualTo(-1);
+        }
+
+        @Test
+        public void 先頭に戻れる() throws Exception {
+            // setup
+            pages.nextPage();
+            pages.nextPage();
+
+            // exercise
+            pages.home();
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(-1);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(0);
+        }
+
+        @Test
+        public void 末尾に移動できる() throws Exception {
+            // setup
+            pages = new BookPages(4);
+            pages.setStartWithLeft(true);
+
+            // exercise
+            pages.end();
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(3);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(-1);
         }
     }
 

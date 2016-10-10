@@ -69,4 +69,12 @@ public class BookPages {
 
         return (maxSize / 2) + (maxSize % 2);
     }
+
+    public void home() {
+        this.currentPageNumber = 1;
+    }
+
+    public void end() {
+        this.currentPageNumber = this.getMaxPageNumber();
+    }
 }
