@@ -6,14 +6,13 @@ import java.util.Optional;
 
 public class Book {
 
-    private File directory;
     private File[] files;
-    private BookPages pages = new BookPages();
+    private BookPages pages;
 
     public Book(File directory) {
-        this.directory = directory;
-        this.files = this.directory.listFiles(File::isFile);
+        this.files = directory.listFiles(File::isFile);
         Arrays.sort(this.files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
+        this.pages = new BookPages(this.files.length);
     }
 
     public boolean switchStartWithLeft() {
@@ -22,35 +21,21 @@ public class Book {
     }
 
     public Optional<File> getRight() {
-        if (this.files.length == 0 || this.pages.getRightIndex() < 0) {
-            return Optional.empty();
-        }
-
-        return Optional.of(this.files[this.pages.getRightIndex()]);
+        int rightIndex = this.pages.getRightIndex();
+        return rightIndex == -1 ? Optional.empty() : Optional.of(this.files[rightIndex]);
     }
 
     public Optional<File> getLeft() {
-        if (this.files.length <= this.pages.getLeftIndex()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(this.files[this.pages.getLeftIndex()]);
+        int leftIndex = this.pages.getLeftIndex();
+        return leftIndex == -1 ? Optional.empty() : Optional.of(this.files[leftIndex]);
     }
 
     public void nextPage() {
         this.pages.nextPage();
-
-        if (this.files.length <= this.pages.getRightIndex()) {
-            this.pages.previousPage();
-        }
     }
 
     public void previousPage() {
         this.pages.previousPage();
-
-        if (this.pages.getRightIndex() < -1) {
-            this.pages.nextPage();
-        }
     }
 
     int getRightIndex() {

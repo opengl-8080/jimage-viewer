@@ -1,28 +1,51 @@
 package jimgv.model;
 
 public class BookPages {
+    private static final int NO_CONTENTS_INDEX = -1;
 
-    private int pageNumber;
+    private final int maxSize;
+    private int currentPageNumber = 1;
     private boolean startWithLeft;
 
+    public BookPages(int maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    BookPages() {
+        this(Integer.MAX_VALUE - 1);
+    }
+
     public int getRightIndex() {
-        return this.getPageNumber();
+        if (this.maxSize == 0) {
+            return NO_CONTENTS_INDEX;
+        }
+
+        if (this.startWithLeft) {
+            return (this.currentPageNumber * 2) - 3;
+        } else {
+            return (this.currentPageNumber - 1) * 2;
+        }
     }
 
     public int getLeftIndex() {
-        return this.getPageNumber() + 1;
+        int leftIndex = this.getRightIndex() + 1;
+        return (this.getMaxIndex() < leftIndex) ? NO_CONTENTS_INDEX : leftIndex;
     }
 
     public void nextPage() {
-        this.pageNumber += 2;
+        if (this.currentPageNumber + 1 <= this.getMaxPageNumber()) {
+            this.currentPageNumber += 1;
+        }
     }
 
     public void previousPage() {
-        this.pageNumber -= 2;
+        if (1 <= this.currentPageNumber - 1) {
+            this.currentPageNumber -= 1;
+        }
     }
 
-    private int getPageNumber() {
-        return this.startWithLeft ? this.pageNumber - 1 : this.pageNumber;
+    private int getMaxIndex() {
+        return this.maxSize - 1;
     }
 
     void setStartWithLeft(boolean startWithLeft) {
@@ -35,5 +58,15 @@ public class BookPages {
 
     public void switchStartWithLeft() {
         this.startWithLeft = !this.startWithLeft;
+    }
+
+    int getMaxPageNumber() {
+        if (this.maxSize == 0) {
+            return 0;
+        }
+
+        int maxSize = this.startWithLeft ? this.maxSize + 1 : this.maxSize;
+
+        return (maxSize / 2) + (maxSize % 2);
     }
 }
