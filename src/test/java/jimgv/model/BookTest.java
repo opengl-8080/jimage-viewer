@@ -140,8 +140,8 @@ public class BookTest {
         @Test
         public void 左右のファイルは空を返す() throws Exception {
             // exercise
-            Optional<File> right = book.getRight();
-            Optional<File> left = book.getLeft();
+            Optional<Page> right = book.getRight();
+            Optional<Page> left = book.getLeft();
 
             // verify
             assertThat(right).as("右ファイル").isEmpty();
@@ -166,7 +166,7 @@ public class BookTest {
         @Test
         public void 右のファイルは唯一のファイルを返す() throws Exception {
             // exercise
-            Optional<File> right = book.getRight();
+            Optional<Page> right = book.getRight();
 
             // verify
             assertThat(right).hasValue(expectedFile("001.jpg"));
@@ -175,7 +175,7 @@ public class BookTest {
         @Test
         public void 左のファイルは空を返す() throws Exception {
             // exercise
-            Optional<File> left = book.getLeft();
+            Optional<Page> left = book.getLeft();
 
             // verify
             assertThat(left).isEmpty();
@@ -220,7 +220,7 @@ public class BookTest {
         @Test
         public void 名前順にソートした最初のファイルが右ページとして取得できる() throws Exception {
             // exercise
-            Optional<File> right = book.getRight();
+            Optional<Page> right = book.getRight();
 
             // verify
             assertThat(right).hasValue(expectedFile("001.jpg"));
@@ -229,7 +229,7 @@ public class BookTest {
         @Test
         public void 名前順にソートした２番目のファイルが左ページとして取得できる() throws Exception {
             // exercise
-            Optional<File> left = book.getLeft();
+            Optional<Page> left = book.getLeft();
 
             // verify
             assertThat(left).hasValue(expectedFile("002.jpg"));
@@ -372,7 +372,7 @@ public class BookTest {
         assertThat(book.getLeft()).as("左").hasValue(expectedFile("001.jpg"));
     }
 
-    private File expectedFile(String name) {
-        return new File(this.folder.getRoot(), name);
+    private Page expectedFile(String name) {
+        return new Page(new File(this.folder.getRoot(), name));
     }
 }

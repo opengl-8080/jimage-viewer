@@ -31,18 +31,18 @@ public class Book {
         return this.pages.isStartWithLeft();
     }
 
-    public Optional<File> getRight() {
+    public Optional<Page> getRight() {
         int rightIndex = this.pages.getRightIndex();
         return this.getFile(rightIndex);
     }
 
-    public Optional<File> getLeft() {
+    public Optional<Page> getLeft() {
         int leftIndex = this.pages.getLeftIndex();
         return this.getFile(leftIndex);
     }
 
-    private Optional<File> getFile(int index) {
-        return index == -1 ? Optional.empty() : Optional.of(this.files[index]);
+    private Optional<Page> getFile(int index) {
+        return index == -1 ? Optional.empty() : Optional.of(new Page(this.files[index]));
     }
 
     public void nextPage() {

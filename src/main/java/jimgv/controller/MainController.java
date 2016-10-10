@@ -4,6 +4,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -21,13 +22,12 @@ import jimgv.model.Book;
 import jimgv.model.BookConfigMap;
 import jimgv.model.BookRepository;
 import jimgv.model.Configuration;
+import jimgv.model.Page;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,16 +87,16 @@ public class MainController implements Initializable {
         this.refreshImage();
     }
 
-    private void setRightImage(File file) {
-        this.setImage(file, this.rightImage);
+    private void setRightImage(Page page) {
+        this.setImage(page, this.rightImage);
     }
 
-    private void setLeftImage(File file) {
-        this.setImage(file, this.leftImage);
+    private void setLeftImage(Page page) {
+        this.setImage(page, this.leftImage);
     }
 
-    private void setImage(File file, ImageView imageView) {
-        Image image = new Image(file.toURI().toString());
+    private void setImage(Page page, ImageView imageView) {
+        Image image = new Image(page.toUriString());
         imageView.setImage(image);
     }
 
@@ -119,6 +119,9 @@ public class MainController implements Initializable {
         this.leftImage.setImage(null);
         this.book.getRight().ifPresent(this::setRightImage);
         this.book.getLeft().ifPresent(this::setLeftImage);
+//
+//        this.imageParentPane.getChildren().remove(this.leftImage);
+//        GridPane.setHalignment(this.rightImage, HPos.CENTER);
     }
 
     @FXML

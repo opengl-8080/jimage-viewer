@@ -97,6 +97,7 @@ public class BookRepositoryTest {
         BookConfig expected = new BookConfig();
         expected.path = bookDir.getAbsolutePath();
         expected.startWithLeft = true;
+        expected.currentPageNumber = 1;
 
         assertThat(actual).isEqualTo(expected);
     }
