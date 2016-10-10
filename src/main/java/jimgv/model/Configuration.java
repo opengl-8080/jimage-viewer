@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Properties;
+import java.util.StringJoiner;
 
 public class Configuration {
     private static final File CONFIG_DIR_PATH = new File("./config");
@@ -92,5 +93,32 @@ public class Configuration {
         if (!FILE_PATH.getParentFile().exists()) {
             FILE_PATH.getParentFile().mkdirs();
         }
+    }
+
+    public boolean isMaximized() {
+        String value = this.prop.getProperty("maximized", "false");
+        return Boolean.parseBoolean(value);
+    }
+
+    public void setMaximized(boolean maximized) {
+        this.prop.setProperty("maximized", String.valueOf(maximized));
+    }
+
+    public double getWindowWidth() {
+        String value = this.prop.getProperty("window.width", "1000.0");
+        return Double.parseDouble(value);
+    }
+
+    public void setWindowWidth(double width) {
+        this.prop.setProperty("window.width", String.valueOf(width));
+    }
+
+    public double getWindowHeight() {
+        String value = this.prop.getProperty("window.height", "600.0");
+        return Double.parseDouble(value);
+    }
+
+    public void setWindowHeight(double height) {
+        this.prop.setProperty("window.height", String.valueOf(height));
     }
 }

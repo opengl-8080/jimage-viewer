@@ -216,13 +216,36 @@ public class MainController implements Initializable {
         this.startWithLeftPageMenuItem.setDisable(true);
         this.repository = new BookRepository(BookConfigMap.getDefault());
 
-        ReadOnlyBooleanProperty fullScreenProperty = Main.getStage().fullScreenProperty();
+        Stage stage = Main.getStage();
+
+        ReadOnlyBooleanProperty fullScreenProperty = stage.fullScreenProperty();
         fullScreenProperty.addListener((observable, oldValue, isFullScreen) -> {
             if (isFullScreen) {
                 hideMenuBar();
             } else {
                 showMenuBar();
             }
+        });
+
+        stage.setWidth(this.config.getWindowWidth());
+        stage.setHeight(this.config.getWindowHeight());
+        stage.setMaximized(this.config.isMaximized());
+
+        stage.widthProperty().addListener((a, b, newWidth) -> {
+            if (!stage.isMaximized()) {
+                this.config.setWindowWidth(newWidth.doubleValue());
+            }
+        });
+
+        stage.heightProperty().addListener((a, b, newHeight) -> {
+            if (!stage.isMaximized()) {
+                this.config.setWindowHeight(newHeight.doubleValue());
+            }
+        });
+
+        stage.setOnCloseRequest((e) -> {
+            this.config.setMaximized(stage.isMaximized());
+            this.config.save();
         });
     }
 }
