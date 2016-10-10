@@ -19,6 +19,81 @@ public class BookTest {
     public TemporaryFolder folder = new TemporaryFolder();
     private Book book;
 
+    public class ページ変更のイベント通知 {
+
+        private int callCount;
+
+        @Before
+        public void setUp() throws Exception {
+            folder.newFolder("foo");
+            folder.newFile("foo/001.jpg");
+            folder.newFile("foo/002.jpg");
+            folder.newFile("foo/003.jpg");
+
+            book = new Book(new File(folder.getRoot(), "foo"));
+            book.addChangeListener(() -> callCount++);
+        }
+
+        @Test
+        public void 次のページに遷移したときに通知される() throws Exception {
+            // exercise
+            book.nextPage();
+
+            // verify
+            assertThat(callCount).isEqualTo(1);
+        }
+
+        @Test
+        public void 前のページに遷移したときに通知される() throws Exception {
+            // exercise
+            book.nextPage();
+            book.previousPage();
+
+            // verify
+            assertThat(callCount).isEqualTo(2);
+        }
+
+        @Test
+        public void Homeに戻ったときに通知される() throws Exception {
+            // exercise
+            book.nextPage();
+            book.home();
+
+            // verify
+            assertThat(callCount).isEqualTo(2);
+        }
+
+        @Test
+        public void Endに戻ったときに通知される() throws Exception {
+            // exercise
+            book.end();
+
+            // verify
+            assertThat(callCount).isEqualTo(1);
+        }
+
+        @Test
+        public void ページが遷移しない場合は通知されない_Homeと前ページ() throws Exception {
+            // exercise
+            book.home();
+            book.previousPage();
+
+            // verify
+            assertThat(callCount).isEqualTo(0);
+        }
+
+        @Test
+        public void ページが遷移しない場合は通知されない_Endと次ページ() throws Exception {
+            // exercise
+            book.end(); // 1回目は遷移するが、それ以降は通知されない
+            book.end();
+            book.nextPage();
+
+            // verify
+            assertThat(callCount).isEqualTo(1);
+        }
+    }
+
     @Test
     public void ディレクトリは無視される() throws Exception {
         // setup

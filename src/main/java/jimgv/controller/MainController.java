@@ -56,6 +56,10 @@ public class MainController implements Initializable {
             return;
         }
 
+        if (this.book != null) {
+            this.repository.save(this.book);
+        }
+
         Optional<Book> book = this.repository.find(directory);
 
         if (book.isPresent()) {
@@ -246,6 +250,10 @@ public class MainController implements Initializable {
         stage.setOnCloseRequest((e) -> {
             this.config.setMaximized(stage.isMaximized());
             this.config.save();
+
+            if (this.book != null) {
+                this.repository.save(this.book);
+            }
         });
     }
 }

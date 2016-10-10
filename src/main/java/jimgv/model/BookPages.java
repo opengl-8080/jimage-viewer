@@ -77,4 +77,18 @@ public class BookPages {
     public void end() {
         this.currentPageNumber = this.getMaxPageNumber();
     }
+
+    int getCurrentPageNumber() {
+        return this.currentPageNumber;
+    }
+
+    public void setCurrentPageNumber(int currentPageNumber) {
+        if (this.getMaxPageNumber() < currentPageNumber) {
+            this.currentPageNumber = this.getMaxPageNumber();
+        } else if (currentPageNumber < 1) {
+            this.currentPageNumber = 1;
+        } else {
+            this.currentPageNumber = currentPageNumber;
+        }
+    }
 }

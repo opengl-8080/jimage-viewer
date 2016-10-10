@@ -120,6 +120,45 @@ public class BookPagesTest {
             assertThat(pages.getRightIndex()).as("right").isEqualTo(2);
             assertThat(pages.getLeftIndex()).as("left").isEqualTo(3);
         }
+
+        @Test
+        public void ページ番号を指定して遷移できる_ページ範囲に収まっている場合() throws Exception {
+            // setup
+            pages = new BookPages(6);
+
+            // exercise
+            pages.setCurrentPageNumber(3);
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(4);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(5);
+        }
+
+        @Test
+        public void ページ番号を指定して遷移できる_ページ範囲に収まっていない場合_末尾オーバー() throws Exception {
+            // setup
+            pages = new BookPages(6);
+
+            // exercise
+            pages.setCurrentPageNumber(4);
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(4);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(5);
+        }
+
+        @Test
+        public void ページ番号を指定して遷移できる_ページ範囲に収まっていない場合_0を指定() throws Exception {
+            // setup
+            pages = new BookPages(6);
+
+            // exercise
+            pages.setCurrentPageNumber(0);
+
+            // verify
+            assertThat(pages.getRightIndex()).as("right").isEqualTo(0);
+            assertThat(pages.getLeftIndex()).as("left").isEqualTo(1);
+        }
     }
 
     public class 左ページ開始の場合 {

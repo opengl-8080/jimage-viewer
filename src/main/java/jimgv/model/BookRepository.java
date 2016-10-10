@@ -50,6 +50,7 @@ public class BookRepository {
         BookConfig bookConfig = JAXB.unmarshal(bookXml, BookConfig.class);
         Book book = new Book(new File(bookConfig.path));
         book.setStartWithLeft(bookConfig.startWithLeft);
+        book.setCurrentPageNumber(bookConfig.currentPageNumber);
         return Optional.of(book);
     }
 
