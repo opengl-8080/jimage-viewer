@@ -3,7 +3,7 @@ package jimgv.model;
 public class BookPages {
     private static final int NO_CONTENTS_INDEX = -1;
 
-    private final int maxSize;
+    private int maxSize;
     private int currentPageNumber = 1;
     private boolean startWithLeft;
 
@@ -90,5 +90,9 @@ public class BookPages {
         } else {
             this.currentPageNumber = currentPageNumber;
         }
+    }
+
+    void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
     }
 }

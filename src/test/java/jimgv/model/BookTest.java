@@ -8,7 +8,12 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,6 +23,84 @@ public class BookTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private Book book;
+
+    public class 単一ページ用の無視ページの処理テスト {
+
+        @Before
+        public void setup() throws Exception {
+            folder.newFolder("foo");
+            folder.newFile("foo/001.jpg");
+            folder.newFile("foo/002.jpg");
+            folder.newFile("foo/003.jpg");
+
+            book = new Book(new File(folder.getRoot(), "foo"));
+        }
+
+        @Test
+        public void 無視ページのマッピングを一括で登録できる() throws Exception {
+            // setup
+            List<Integer> ignorePageIndexes = Arrays.asList(1, 3);
+
+            // exercise
+            book.addIgnorePages(ignorePageIndexes);
+
+            // verify
+            assertThat(book.getRight()).as("right 1").hasValue(expectedFile("foo/001.jpg"));
+            assertThat(book.getLeft().get().isIgnorePage()).as("left 1").isTrue();
+
+            book.nextPage();
+
+            assertThat(book.getRight()).as("right 2").hasValue(expectedFile("foo/002.jpg"));
+            assertThat(book.getLeft().get().isIgnorePage()).as("left 2").isTrue();
+        }
+
+        @Test
+        public void 現在の左ページに無視ページを挿入できる() throws Exception {
+            // exercise
+            book.addIgnorePageAtCurrentPage();
+
+            // verify
+            assertThat(book.getRight()).as("right").hasValue(expectedFile("foo/001.jpg"));
+            assertThat(book.getLeft().get().isIgnorePage()).as("left").isTrue();
+        }
+
+        @Test
+        public void 現在の左ページから無視ページを削除できる() throws Exception {
+            // setup
+            book.addIgnorePageAtCurrentPage();
+
+            // exercise
+            book.removeIgnorePageAtCurrentPage();
+
+            // verify
+            assertThat(book.getRight()).as("right").hasValue(expectedFile("foo/001.jpg"));
+            assertThat(book.getLeft()).as("left").hasValue(expectedFile("foo/002.jpg"));
+        }
+
+        @Test
+        public void 無視ページの削除後も正しくページ遷移ができること() throws Exception {
+            // setup
+            book.addIgnorePageAtCurrentPage();
+
+            // exercise
+            book.removeIgnorePageAtCurrentPage();
+            book.nextPage();
+
+            // verify
+            assertThat(book.getRight()).as("right").hasValue(expectedFile("foo/003.jpg"));
+            assertThat(book.getLeft()).as("left").isEmpty();
+        }
+
+        @Test
+        public void 現在の左ページが無視ページかどうか確認できる() throws Exception {
+            // setup
+            book.addIgnorePageAtCurrentPage();
+
+            // exercise, verify
+            assertThat(book.hasIgnorePageAtCurrentPage()).isTrue();
+        }
+    }
+
 
     public class ページ変更のイベント通知 {
 

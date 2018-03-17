@@ -5,25 +5,30 @@ import jimgv.model.config.BookConfig;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Book {
 
     private Set<Runnable> changeListeners = new HashSet<>();
     private final File directory;
-    private File[] files;
+    private List<Page> pageList;
     private BookPages pages;
 
     public Book(File directory) {
         this.directory = directory;
-        this.files = directory.listFiles(File::isFile);
+        File[] files = directory.listFiles(File::isFile);
 
-        if (this.files == null) {
-            this.files = new File[0];
+        if (files == null) {
+            files = new File[0];
         }
-        Arrays.sort(this.files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
-        this.pages = new BookPages(this.files.length);
+        Arrays.sort(files, (f1, f2) -> f1.getName().compareTo(f2.getName()));
+
+        this.pageList = Stream.of(files).map(Page::new).collect(Collectors.toList());
+        this.pages = new BookPages(files.length);
     }
 
     public boolean switchStartWithLeft() {
@@ -42,7 +47,7 @@ public class Book {
     }
 
     private Optional<Page> getFile(int index) {
-        return index == -1 ? Optional.empty() : Optional.of(new Page(this.files[index]));
+        return index == -1 ? Optional.empty() : Optional.of(this.pageList.get(index));
     }
 
     public void nextPage() {
@@ -76,18 +81,18 @@ public class Book {
     }
 
     int size() {
-        return this.files.length;
+        return this.pageList.size();
     }
 
     void setStartWithLeft(boolean startWithLeft) {
         this.pages.setStartWithLeft(startWithLeft);
     }
 
-    public File getDirectory() {
+    File getDirectory() {
         return this.directory;
     }
 
-    public BookConfig toBookConfig() {
+    BookConfig toBookConfig() {
         BookConfig bookConfig = new BookConfig();
         bookConfig.path = this.directory.getAbsolutePath();
         bookConfig.startWithLeft = this.pages.isStartWithLeft();
@@ -100,11 +105,34 @@ public class Book {
         return this.pages.isStartWithLeft();
     }
 
-    public void addChangeListener(Runnable listener) {
+    void addChangeListener(Runnable listener) {
         this.changeListeners.add(listener);
     }
 
-    public void setCurrentPageNumber(int currentPageNumber) {
+    void setCurrentPageNumber(int currentPageNumber) {
         this.pages.setCurrentPageNumber(currentPageNumber);
+    }
+
+    public void addIgnorePageAtCurrentPage() {
+        int leftIndex = this.pages.getLeftIndex();
+        this.pageList.add(leftIndex, Page.ignore());
+        this.pages.setMaxSize(this.pageList.size());
+    }
+
+    public void removeIgnorePageAtCurrentPage() {
+        int leftIndex = this.pages.getLeftIndex();
+        this.pageList.remove(leftIndex);
+        this.pages.setMaxSize(this.pageList.size());
+    }
+
+    public boolean hasIgnorePageAtCurrentPage() {
+        return this.getLeft().map(Page::isIgnorePage).orElse(false);
+    }
+
+    public void addIgnorePages(List<Integer> ignorePageIndexes) {
+        for (Integer ignorePageIndex : ignorePageIndexes) {
+            this.pageList.add(ignorePageIndex, Page.ignore());
+        }
+        this.pages.setMaxSize(this.pageList.size());
     }
 }

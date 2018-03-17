@@ -23,3 +23,10 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.5.2'
     testCompile 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.1'
 }
+
+jar {
+    baseName = 'jimage-viewer'
+    manifest {
+        attributes('Main-Class': 'jimgv.Main')
+    }
+}
