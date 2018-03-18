@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -133,5 +134,15 @@ public class SingleImageController implements Initializable {
     @FXML
     public void onScroll(ScrollEvent e) {
         mouseGesture.onScroll(e);
+    }
+    
+    @FXML
+    public void onZoom(ZoomEvent e) {
+        singleImage.startZoom(e.getZoomFactor());
+    }
+    
+    @FXML
+    public void onZoomFinished() {
+        singleImage.stopZoom();
     }
 }
