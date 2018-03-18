@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jimgv.Config;
+import jimgv.controller.single.SingleImageController;
 
 import java.io.File;
 import java.net.URL;
