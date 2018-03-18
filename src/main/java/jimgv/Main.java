@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import jimgv.controller.MainController;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -25,7 +26,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Main.stage = primaryStage;
 
-        Parent fxml = FXMLLoader.load(Main.class.getResource("/fxml/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("/fxml/main.fxml"));
+        Parent fxml = loader.load();
+
+        MainController controller = loader.getController();
+        controller.setStage(primaryStage);
 
         Scene scene = new Scene(fxml);
         primaryStage.setScene(scene);
