@@ -50,7 +50,7 @@ public class Config {
     
     private void save() {
         try {
-            try (OutputStream out = Files.newOutputStream(CONFIG_FILE, StandardOpenOption.CREATE)) {
+            try (OutputStream out = Files.newOutputStream(CONFIG_FILE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
                 prop.storeToXML(out, "jimage-viewer");
             }
         } catch (IOException e) {
