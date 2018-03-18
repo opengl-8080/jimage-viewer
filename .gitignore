@@ -5,3 +5,4 @@ config/
 classes/
 *.iml 
 jimage-viewer.xml 
+out/
