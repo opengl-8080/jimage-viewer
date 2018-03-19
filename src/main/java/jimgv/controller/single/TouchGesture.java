@@ -29,11 +29,6 @@ public class TouchGesture {
         this.doubleTapListener = doubleTapListener;
     }
 
-    private BiConsumer<Double, Double> touchPressedListener;
-    public void setTouchPressedListener(BiConsumer<Double, Double> touchPressedListener) {
-        this.touchPressedListener = touchPressedListener;
-    }
-
     private BiConsumer<Double, Double> touchMoveListener;
     public void setTouchMoveListener(BiConsumer<Double, Double> touchMoveListener) {
         this.touchMoveListener = touchMoveListener;
@@ -51,7 +46,6 @@ public class TouchGesture {
             screenY = e.getTouchPoint().getScreenY();
             previousScreenX = screenX;
             previousScreenY = screenY;
-            touchPressedListener.accept(screenX, screenY);
         }
     }
 

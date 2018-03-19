@@ -15,7 +15,7 @@ public class TouchControlImageViewModel extends ImageViewModelBase {
     @Override
     public void translate(double dx, double dy) {
         if (!isZoomed()) {
-            double rate = Math.abs(dx) / stage.getWidth();
+            double rate = Math.abs(imageView.getTranslateX()) / stage.getWidth();
 
             double Ys = 0.5;
             double Ye = 0.2;
@@ -30,7 +30,9 @@ public class TouchControlImageViewModel extends ImageViewModelBase {
             } else {
                 imageView.setOpacity(Ye);
             }
+            super.translate(dx, 0);
+        } else {
+            super.translate(dx, dy);
         }
-        super.translate(dx, dy);
     }
 }
