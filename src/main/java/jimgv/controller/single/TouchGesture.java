@@ -47,7 +47,7 @@ public class TouchGesture {
             touched = true;
             screenX = e.getTouchPoint().getScreenX();
             screenY = e.getTouchPoint().getScreenY();
-            touchReleasedListener.accept(screenX, screenY);
+            touchPressedListener.accept(screenX, screenY);
         }
     }
     
