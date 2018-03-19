@@ -10,12 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -56,29 +54,37 @@ public class SingleImageController implements Initializable {
     
     @FXML
     private ImageView imageView;
-    private SingleImage singleImage;
     private ContextMenu contextMenu = new ContextMenu();
     private MouseGesture mouseGesture = new MouseGesture();
-    private OpenedDirectory openedDirectory;
+    private ImageViewModel imageViewModel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        singleImage = new SingleImage(imageView);
+        imageViewModel = new MouseControlImageViewModel(imageView);
         
-        mouseGesture.setLeftDragListener(singleImage::stopTranslate);
+        mouseGesture.setLeftDragListener((dx, dy) -> {
+            imageViewModel.translate(dx, dy);
+        });
         
-        mouseGesture.setRightScrollListener(singleImage::startZoom);
+        mouseGesture.setRightScrollListener(deltaY -> {
+            if (deltaY < 0) {
+                imageViewModel.zoomDown();
+            } else {
+                imageViewModel.zoomUp();
+            }
+        });
         
         mouseGesture.setScrollListener(delta -> {
-            Path imagePath = delta < 0 ? openedDirectory.previous() : openedDirectory.next();
-            singleImage.load(imagePath);
+            if (delta < 0) {
+                imageViewModel.loadPreviousImage();
+            } else {
+                imageViewModel.loadNextImage();
+            }
         });
     }
 
     private void setImage(Stage stage, Path imagePath) {
-        openedDirectory = new OpenedDirectory(imagePath);
-
-        singleImage.load(imagePath);
+        imageViewModel.open(imagePath);
         
         stage.setWidth(1000.0);
         stage.setHeight(600.0);
@@ -90,7 +96,7 @@ public class SingleImageController implements Initializable {
     
     private void createContextMenu(Stage stage) {
         addMenuItem("全画面", e -> stage.setFullScreen(!stage.isFullScreen()));
-        addMenuItem("拡大リセット", e -> singleImage.resetZoom());
+        addMenuItem("拡大リセット", e -> imageViewModel.reset());
         contextMenu.getItems().add(new SeparatorMenuItem());
         addMenuItem("閉じる", e -> stage.close());
     }
@@ -103,7 +109,7 @@ public class SingleImageController implements Initializable {
     
     @FXML
     public void openContextMenu(ContextMenuEvent e) {
-        if (!singleImage.isZooming()) {
+        if (!imageViewModel.isZooming()) {
             contextMenu.hide();
             contextMenu.show(imageView, e.getScreenX(), e.getScreenY());
         }
@@ -111,14 +117,10 @@ public class SingleImageController implements Initializable {
     
     @FXML
     public void onMousePressed(MouseEvent e) {
-        singleImage.stopZoom();
+        imageViewModel.finishZoom();
         contextMenu.hide();
 
         mouseGesture.onMousePressed(e);
-        
-        if (e.isPrimaryButtonDown()) {
-            singleImage.startTranslate();
-        }
     }
     
     @FXML
@@ -134,15 +136,5 @@ public class SingleImageController implements Initializable {
     @FXML
     public void onScroll(ScrollEvent e) {
         mouseGesture.onScroll(e);
-    }
-    
-    @FXML
-    public void onZoom(ZoomEvent e) {
-        singleImage.startZoom(e.getZoomFactor());
-    }
-    
-    @FXML
-    public void onZoomFinished() {
-        singleImage.stopZoom();
     }
 }

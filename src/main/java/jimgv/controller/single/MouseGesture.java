@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 public class MouseGesture {
     private boolean leftClicked;
     private boolean rightClicked;
-    private double screenX;
-    private double screenY;
+    private double previousScreenX;
+    private double previousScreenY;
     private BiConsumer<Double, Double> leftDragListener;
     private Consumer<Double> rightScrollListener;
     private Consumer<Double> scrollListener;
@@ -30,8 +30,8 @@ public class MouseGesture {
     public void onMousePressed(MouseEvent e) {
         leftClicked = e.isPrimaryButtonDown();
         rightClicked = e.isSecondaryButtonDown();
-        screenX = e.getScreenX();
-        screenY = e.getScreenY();
+        previousScreenX = e.getScreenX();
+        previousScreenY = e.getScreenY();
     }
     
     public void onMouseReleased() {
@@ -41,9 +41,11 @@ public class MouseGesture {
     
     public void onMouseDragged(MouseEvent e) {
         if (leftClicked) {
-            double dx = e.getScreenX() - screenX;
-            double dy = e.getScreenY() - screenY;
+            double dx = e.getScreenX() - previousScreenX;
+            double dy = e.getScreenY() - previousScreenY;
             leftDragListener.accept(dx, dy);
+            previousScreenX = e.getScreenX();
+            previousScreenY = e.getScreenY();
         }
     }
     
