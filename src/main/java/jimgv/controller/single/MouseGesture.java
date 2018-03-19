@@ -2,6 +2,7 @@ package jimgv.controller.single;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TouchEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -27,11 +28,14 @@ public class MouseGesture {
         this.scrollListener = scrollListener;
     }
 
-    public void onMousePressed(MouseEvent e) {
-        leftClicked = e.isPrimaryButtonDown();
-        rightClicked = e.isSecondaryButtonDown();
-        screenX = e.getScreenX();
-        screenY = e.getScreenY();
+    public void onMousePressed(TouchEvent e) {
+//        leftClicked = e.isPrimaryButtonDown();
+//        rightClicked = e.isSecondaryButtonDown();
+        if (e.getTouchCount() == 1) {
+            leftClicked = true;
+            screenX = e.getTouchPoint().getScreenX();
+            screenY = e.getTouchPoint().getScreenY();
+        }
     }
     
     public void onMouseReleased() {
@@ -39,10 +43,10 @@ public class MouseGesture {
         rightClicked = false;
     }
     
-    public void onMouseDragged(MouseEvent e) {
-        if (leftClicked) {
-            double dx = e.getScreenX() - screenX;
-            double dy = e.getScreenY() - screenY;
+    public void onMouseDragged(TouchEvent e) {
+        if (leftClicked && e.getTouchCount() == 1) {
+            double dx = e.getTouchPoint().getScreenX() - screenX;
+            double dy = e.getTouchPoint().getScreenY() - screenY;
             leftDragListener.accept(dx, dy);
         }
     }

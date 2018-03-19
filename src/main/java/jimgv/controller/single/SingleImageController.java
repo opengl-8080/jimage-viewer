@@ -10,12 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.input.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -75,9 +71,12 @@ public class SingleImageController implements Initializable {
         });
     }
 
+    private Stage stage;
+
     private void setImage(Stage stage, Path imagePath) {
         openedDirectory = new OpenedDirectory(imagePath);
 
+        this.stage = stage;
         singleImage.load(imagePath);
         
         stage.setWidth(1000.0);
@@ -110,28 +109,89 @@ public class SingleImageController implements Initializable {
     }
     
     @FXML
-    public void onMousePressed(MouseEvent e) {
-        singleImage.stopZoom();
+    public void onTouchPressed(TouchEvent e) {
         contextMenu.hide();
 
         mouseGesture.onMousePressed(e);
-        
-        if (e.isPrimaryButtonDown()) {
+
+        if (e.getTouchCount() == 1) {
             singleImage.startTranslate();
+            fromX = e.getTouchPoint().getScreenX();
+        }
+    }
+
+    @FXML
+    public void onTouchReleased(TouchEvent e) {
+        mouseGesture.onMouseReleased();
+
+        if (e.getTouchCount() == 1 && fromX != null) {
+            double dx = fromX - e.getTouchPoint().getScreenX();
+
+            if (!singleImage.isZoomed()) {
+                singleImage.resetZoom();
+                double rate = Math.abs(dx) / stage.getWidth();
+
+                double E = 0.15;
+
+                if (E < rate) {
+                    if (dx < 0) {
+                        Path previous = openedDirectory.previous();
+                        singleImage.load(previous);
+                    } else {
+                        Path next = openedDirectory.next();
+                        singleImage.load(next);
+                    }
+
+                    fromX = null;
+                }
+            }
+        }
+        fromX = null;
+        imageView.setOpacity(1.0);
+    }
+
+    private Double fromX;
+    
+    @FXML
+    public void onTouchMoved(TouchEvent e) {
+        mouseGesture.onMouseDragged(e);
+
+        if (e.getTouchCount() == 1 && fromX != null) {
+            double dx = fromX - e.getTouchPoint().getScreenX();
+
+            if (!singleImage.isZoomed()) {
+                double rate = Math.abs(dx) / stage.getWidth();
+
+//                double S = 0.08;
+//                double E = 0.3;
+//                if (S < rate) {
+//                    imageView.setOpacity((E - rate) / (E - S));
+//                }
+                double Ys = 0.5;
+                double Ye = 0.2;
+                double Xs = 0.15;
+                double Xe = 0.4;
+                double DX = Xe-Xs;
+                double DY = Ys-Ye;
+                if (rate < Xs) {
+                    imageView.setOpacity(1.0);
+                } else if (Xs <= rate && rate < Xe) {
+                    imageView.setOpacity(DY*(Xe-rate)/DX + Ye);
+                } else {
+                    imageView.setOpacity(Ye);
+                }
+            }
+        }
+    }
+
+    @FXML
+    public void onMouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            singleImage.resetZoom();
         }
     }
     
-    @FXML
-    public void onMouseReleased() {
-        mouseGesture.onMouseReleased();
-    }
-    
-    @FXML
-    public void onMouseDragged(MouseEvent e) {
-        mouseGesture.onMouseDragged(e);
-    }
-    
-    @FXML
+//    @FXML
     public void onScroll(ScrollEvent e) {
         mouseGesture.onScroll(e);
     }
@@ -144,5 +204,10 @@ public class SingleImageController implements Initializable {
     @FXML
     public void onZoomFinished() {
         singleImage.stopZoom();
+    }
+
+    @FXML
+    public void onSwipeLeft(SwipeEvent e) {
+        System.out.println("swipe left");
     }
 }
