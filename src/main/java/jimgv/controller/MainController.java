@@ -6,6 +6,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jimgv.Config;
 import jimgv.controller.single.SingleImageController;
+import jimgv.controller.single.TouchPanelSingleImageController;
 
 import java.io.File;
 import java.net.URL;
@@ -29,12 +30,12 @@ public class MainController implements Initializable {
         File file = chooser.showOpenDialog(this.stage);
         if (file != null) {
             Config.getInstance().setLastOpenedDirectory(file.getParentFile().toPath());
-            SingleImageController.open(file.toPath());
+            TouchPanelSingleImageController.open(file.toPath());
         }
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        stage.setOnCloseRequest(e -> SingleImageController.closeAll());
+        stage.setOnCloseRequest(e -> TouchPanelSingleImageController.closeAll());
     }
 }
