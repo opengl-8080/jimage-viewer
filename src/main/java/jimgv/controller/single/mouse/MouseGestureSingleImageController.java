@@ -1,4 +1,6 @@
-package jimgv.controller.single;
+package jimgv.controller.single.mouse;
+
+import jimgv.controller.single.SingleImageControllerBase;
 
 public class MouseGestureSingleImageController extends SingleImageControllerBase {
     private MouseGesture mouseGesture = new MouseGesture();

@@ -1,4 +1,4 @@
-package jimgv.controller.single;
+package jimgv.model.single;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -8,10 +8,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SingleImageWindow {
+    private static Set<Stage> openedStages = new HashSet<>();
     
-    public static Stage open(Path image, SingleImageController controller) {
+    public static void open(Path image, SingleImageController controller) {
         try {
             FXMLLoader loader = new FXMLLoader(SingleImageWindow.class.getResource("/fxml/single-image.fxml"));
             loader.setController(controller);
@@ -27,10 +30,14 @@ public class SingleImageWindow {
 
             stage.show();
             
-            return stage;
+            openedStages.add(stage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+    
+    public static void closeAll() {
+        openedStages.forEach(Stage::close);
     }
     
     private SingleImageWindow() {}

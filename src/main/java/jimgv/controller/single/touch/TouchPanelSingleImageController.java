@@ -1,4 +1,6 @@
-package jimgv.controller.single;
+package jimgv.controller.single.touch;
+
+import jimgv.controller.single.SingleImageControllerBase;
 
 public class TouchPanelSingleImageController extends SingleImageControllerBase {
     private TouchGesture touchGesture = new TouchGesture();

@@ -1,4 +1,4 @@
-package jimgv.controller.single;
+package jimgv.controller.single.mouse;
 
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
