@@ -30,7 +30,7 @@ public class TouchPanelSingleImageController implements Initializable {
 
     public static void open(Path image) {
         try {
-            FXMLLoader loader = new FXMLLoader(SingleImageController.class.getResource("/fxml/touch-single-image.fxml"));
+            FXMLLoader loader = new FXMLLoader(TouchPanelSingleImageController.class.getResource("/fxml/touch-single-image.fxml"));
             Parent parent = loader.load();
             Stage stage = new Stage();
             Scene scene = new Scene(parent);
