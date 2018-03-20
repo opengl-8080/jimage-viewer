@@ -67,6 +67,27 @@ public class ImageViewModel {
     }
 
     /**
+     * 拡大率を指定して画像を拡大・縮小する.
+     * <p>
+     * 現在のスケールに、指定した拡大率を乗算した値が新しいスケールとして設定されます.<br>
+     * つまり、 0.0 - 1.0 の間は縮小、 1.0 より大きい場合は拡大になります.
+     * <p>
+     * 拡大・縮小の結果が規定のサイズを超える場合は、規定のサイズ内に収まるように
+     * スケールは調整されます.
+     *
+     * @param rate 拡大率 (0.0 より大きい値)
+     */
+    public void zoom(double rate) {
+        double scale = zoomScale.get() * rate;
+        if (scale < 1.0) {
+            scale = 1.0;
+        } else if (5.0 < scale) {
+            scale = 5.0;
+        }
+        zoomScale.set(scale);
+    }
+
+    /**
      * 画像を１段階拡大する.
      */
     public void zoomIn() {

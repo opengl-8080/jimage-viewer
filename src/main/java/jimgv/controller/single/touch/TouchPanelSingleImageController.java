@@ -59,12 +59,8 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
             imageView.setOpacity(1.0);
         });
         
-        touchGesture.onZoomed(rate -> {
-            if (rate < 1.0) {
-                imageViewModel.zoomOut();
-            } else {
-                imageViewModel.zoomIn();
-            }
+        touchGesture.onZoomed(zoomFactor -> {
+            imageViewModel.zoom(zoomFactor);
         });
 
         touchGesture.onZoomFinished(() -> {
