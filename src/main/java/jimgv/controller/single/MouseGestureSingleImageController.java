@@ -1,12 +1,10 @@
 package jimgv.controller.single;
 
-import javafx.scene.image.ImageView;
-
 public class MouseGestureSingleImageController extends SingleImageControllerBase {
     private MouseGesture mouseGesture = new MouseGesture();
 
     @Override
-    protected ImageViewModel createImageViewModel(ImageView imageView) {
+    protected ImageViewModel createImageViewModel() {
         return new MouseControlImageViewModel(imageView);
     }
 

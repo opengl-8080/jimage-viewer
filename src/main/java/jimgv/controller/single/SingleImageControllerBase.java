@@ -16,16 +16,19 @@ public abstract class SingleImageControllerBase implements SingleImageController
     @FXML
     protected Node root;
     @FXML
-    private ImageView imageView;
+    protected ImageView imageView;
 
     protected ContextMenu contextMenu = new ContextMenu();
     protected ImageViewModel imageViewModel;
+    protected Stage stage;
 
-    protected abstract ImageViewModel createImageViewModel(ImageView imageView);
+    protected abstract ImageViewModel createImageViewModel();
     protected abstract void initGestureHandlers();
     
     @Override
     public void init(Stage stage, Path imagePath) {
+        this.stage = stage;
+        
         createContextMenu(stage);
         
         stage.setWidth(1000.0);
@@ -34,7 +37,7 @@ public abstract class SingleImageControllerBase implements SingleImageController
         imageView.fitWidthProperty().bind(stage.widthProperty());
         imageView.fitHeightProperty().bind(stage.heightProperty());
         
-        imageViewModel = createImageViewModel(imageView);
+        imageViewModel = createImageViewModel();
         imageViewModel.open(imagePath);
         
         root.setOnContextMenuRequested(e -> {

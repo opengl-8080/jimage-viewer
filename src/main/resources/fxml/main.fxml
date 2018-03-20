@@ -3,8 +3,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" styleClass="main-stage" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jimgv.controller.MainController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" spacing="20.0" styleClass="main-stage" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jimgv.controller.MainController">
    <children>
-      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openImage" text="Open Image" />
+      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openForMouse" text="Mouse" />
+      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openForTouchPanel" text="Touch Panel" />
    </children>
 </VBox>
