@@ -21,7 +21,8 @@ public abstract class SingleImageControllerBase implements SingleImageController
     protected ContextMenu contextMenu = new ContextMenu();
     protected ImageViewModel imageViewModel;
 
-    protected abstract ImageViewModel createImageViewModel(Path imagePath);
+    protected abstract ImageViewModel createImageViewModel(ImageView imageView);
+    protected abstract void initGestureHandlers();
     
     @Override
     public void init(Stage stage, Path imagePath) {
@@ -33,7 +34,7 @@ public abstract class SingleImageControllerBase implements SingleImageController
         imageView.fitWidthProperty().bind(stage.widthProperty());
         imageView.fitHeightProperty().bind(stage.heightProperty());
         
-        imageViewModel = createImageViewModel(imagePath);
+        imageViewModel = createImageViewModel(imageView);
         imageViewModel.open(imagePath);
         
         root.setOnContextMenuRequested(e -> {
@@ -42,6 +43,8 @@ public abstract class SingleImageControllerBase implements SingleImageController
                 contextMenu.show(imageView, e.getScreenX(), e.getScreenY());
             }
         });
+
+        initGestureHandlers();
     }
 
     private void createContextMenu(Stage stage) {
