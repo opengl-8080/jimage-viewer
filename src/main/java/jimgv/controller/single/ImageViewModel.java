@@ -54,9 +54,16 @@ public class ImageViewModel {
      */
     public void reset() {
         zoomScale.set(1.0);
+        finishZoom();
+        resetTranslation();
+    }
+
+    /**
+     * 画像の位置を初期位置に戻す.
+     */
+    private void resetTranslation() {
         imageView.setTranslateX(0.0);
         imageView.setTranslateY(0.0);
-        finishZoom();
     }
 
     /**
@@ -108,6 +115,9 @@ public class ImageViewModel {
      */
     public void finishZoom() {
         zooming = false;
+        if (!isZoomed()) {
+            resetTranslation();
+        }
     }
 
     /**
