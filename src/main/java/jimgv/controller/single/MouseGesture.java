@@ -1,5 +1,6 @@
 package jimgv.controller.single;
 
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
@@ -14,32 +15,38 @@ public class MouseGesture {
     private BiConsumer<Double, Double> leftDragListener;
     private Consumer<Double> rightScrollListener;
     private Consumer<Double> scrollListener;
+    private BiConsumer<Double, Double> mousePressedListener;
 
-    public void setLeftDragListener(BiConsumer<Double, Double> leftDragListener) {
+    public void onMousePressed(BiConsumer<Double, Double> mousePressedListener) {
+        this.mousePressedListener = mousePressedListener;
+    }
+    
+    public void onLeftDrag(BiConsumer<Double, Double> leftDragListener) {
         this.leftDragListener = leftDragListener;
     }
 
-    public void setRightScrollListener(Consumer<Double> rightScrollListener) {
+    public void onRightScroll(Consumer<Double> rightScrollListener) {
         this.rightScrollListener = rightScrollListener;
     }
 
-    public void setScrollListener(Consumer<Double> scrollListener) {
+    public void onScroll(Consumer<Double> scrollListener) {
         this.scrollListener = scrollListener;
     }
 
-    public void onMousePressed(MouseEvent e) {
+    private void onMousePressed(MouseEvent e) {
         leftClicked = e.isPrimaryButtonDown();
         rightClicked = e.isSecondaryButtonDown();
         previousScreenX = e.getScreenX();
         previousScreenY = e.getScreenY();
+        mousePressedListener.accept(e.getScreenX(), e.getScreenY());
     }
     
-    public void onMouseReleased() {
+    private void onMouseReleased() {
         leftClicked = false;
         rightClicked = false;
     }
     
-    public void onMouseDragged(MouseEvent e) {
+    private void onMouseDragged(MouseEvent e) {
         if (leftClicked) {
             double dx = e.getScreenX() - previousScreenX;
             double dy = e.getScreenY() - previousScreenY;
@@ -49,7 +56,7 @@ public class MouseGesture {
         }
     }
     
-    public void onScroll(ScrollEvent e) {
+    private void onScroll(ScrollEvent e) {
         if (rightClicked) {
             rightScrollListener.accept(e.getDeltaY());
         }
@@ -57,5 +64,12 @@ public class MouseGesture {
         if (!leftClicked && !rightClicked) {
             scrollListener.accept(e.getDeltaY());
         }
+    }
+
+    public void bind(Node root) {
+        root.setOnMouseReleased(e -> onMouseReleased());
+        root.setOnMouseDragged(this::onMouseDragged);
+        root.setOnScroll(this::onScroll);
+        root.setOnMousePressed(this::onMousePressed);
     }
 }

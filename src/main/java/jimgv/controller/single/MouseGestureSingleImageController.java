@@ -10,30 +10,18 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
 
     @Override
     public void initGestureHandlers() {
-        root.setOnMousePressed(e -> {
+        mouseGesture.bind(root);
+
+        mouseGesture.onMousePressed((x, y) -> {
             imageViewModel.finishZoom();
             contextMenu.hide();
-
-            mouseGesture.onMousePressed(e);
-        });
-
-        root.setOnMouseReleased(e -> {
-            mouseGesture.onMouseReleased();
-        });
-
-        root.setOnMouseDragged(e -> {
-            mouseGesture.onMouseDragged(e);
-        });
-
-        root.setOnScroll(e -> {
-            mouseGesture.onScroll(e);
         });
         
-        mouseGesture.setLeftDragListener((dx, dy) -> {
+        mouseGesture.onLeftDrag((dx, dy) -> {
             imageViewModel.translate(dx, dy);
         });
 
-        mouseGesture.setRightScrollListener(deltaY -> {
+        mouseGesture.onRightScroll(deltaY -> {
             if (deltaY < 0) {
                 imageViewModel.zoomDown();
             } else {
@@ -41,7 +29,7 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
             }
         });
 
-        mouseGesture.setScrollListener(delta -> {
+        mouseGesture.onScroll(delta -> {
             if (delta < 0) {
                 imageViewModel.loadPreviousImage();
             } else {
