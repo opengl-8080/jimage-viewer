@@ -22,7 +22,6 @@ public abstract class SingleImageControllerBase implements SingleImageController
     protected ImageViewModel imageViewModel;
     protected Stage stage;
 
-    protected abstract ImageViewModel createImageViewModel();
     protected abstract void initGestureHandlers();
     
     @Override
@@ -37,7 +36,7 @@ public abstract class SingleImageControllerBase implements SingleImageController
         imageView.fitWidthProperty().bind(stage.widthProperty());
         imageView.fitHeightProperty().bind(stage.heightProperty());
         
-        imageViewModel = createImageViewModel();
+        imageViewModel = new ImageViewModel(imageView);
         imageViewModel.open(imagePath);
         
         root.setOnContextMenuRequested(e -> {

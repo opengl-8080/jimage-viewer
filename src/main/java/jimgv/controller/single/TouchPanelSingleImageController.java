@@ -4,11 +4,6 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
     private TouchGesture touchGesture = new TouchGesture();
 
     @Override
-    protected ImageViewModel createImageViewModel() {
-        return new TouchControlImageViewModel(stage, imageView);
-    }
-
-    @Override
     protected void initGestureHandlers() {
         touchGesture.bind(root);
 
@@ -21,7 +16,26 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
         });
 
         touchGesture.onSingleTouchMoved((dx, dy) -> {
-            imageViewModel.translate(dx, dy);
+            if (!imageViewModel.isZoomed()) {
+                double rate = Math.abs(imageView.getTranslateX()) / stage.getWidth();
+
+                double Ys = 0.5;
+                double Ye = 0.2;
+                double Xs = 0.15;
+                double Xe = 0.4;
+                double DX = Xe-Xs;
+                double DY = Ys-Ye;
+                if (rate < Xs) {
+                    imageView.setOpacity(1.0);
+                } else if (Xs <= rate && rate < Xe) {
+                    imageView.setOpacity(DY*(Xe-rate)/DX + Ye);
+                } else {
+                    imageView.setOpacity(Ye);
+                }
+                imageViewModel.translate(dx, 0);
+            } else {
+                imageViewModel.translate(dx, dy);
+            }
         });
         
         touchGesture.onSingleTouchReleased((dx, dy) -> {

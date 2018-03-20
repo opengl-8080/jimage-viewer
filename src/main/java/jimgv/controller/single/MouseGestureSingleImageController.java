@@ -4,11 +4,6 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
     private MouseGesture mouseGesture = new MouseGesture();
 
     @Override
-    protected ImageViewModel createImageViewModel() {
-        return new MouseControlImageViewModel(imageView);
-    }
-
-    @Override
     public void initGestureHandlers() {
         mouseGesture.bind(root);
 
@@ -18,7 +13,9 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
         });
         
         mouseGesture.onLeftDragged((dx, dy) -> {
-            imageViewModel.translate(dx, dy);
+            if (imageViewModel.isZoomed()) {
+                imageViewModel.translate(dx, dy);
+            }
         });
 
         mouseGesture.onRightScrolled(deltaY -> {
