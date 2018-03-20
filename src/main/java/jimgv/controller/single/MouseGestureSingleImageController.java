@@ -17,11 +17,11 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
             contextMenu.hide();
         });
         
-        mouseGesture.onLeftDrag((dx, dy) -> {
+        mouseGesture.onLeftDragged((dx, dy) -> {
             imageViewModel.translate(dx, dy);
         });
 
-        mouseGesture.onRightScroll(deltaY -> {
+        mouseGesture.onRightScrolled(deltaY -> {
             if (deltaY < 0) {
                 imageViewModel.zoomDown();
             } else {
@@ -29,7 +29,7 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
             }
         });
 
-        mouseGesture.onScroll(delta -> {
+        mouseGesture.onScrolled(delta -> {
             if (delta < 0) {
                 imageViewModel.loadPreviousImage();
             } else {

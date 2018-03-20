@@ -1,5 +1,6 @@
 package jimgv.controller.single;
 
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
@@ -14,72 +15,88 @@ public class TouchGesture {
     private double previousScreenX;
     private double previousScreenY;
 
+    public void bind(Node root) {
+        root.setOnTouchPressed(this::onSingleTouchPressed);
+        root.setOnTouchReleased(this::onTouchReleased);
+        root.setOnTouchMoved(this::onTouchMoved);
+        root.setOnMouseClicked(this::onMouseClicked);
+        root.setOnZoom(this::onZoomed);
+        root.setOnZoomFinished(e -> onZoomFinished());
+    }
+    
+    private BiConsumer<Double, Double> singleTouchPressedListener;
+    public void onSingleTouchPressed(BiConsumer<Double, Double> singleTouchPressedListener) {
+        this.singleTouchPressedListener = singleTouchPressedListener;
+    }
+
     private Runnable zoomFinishedListener;
-    public void setZoomFinishedListener(Runnable zoomFinishedListener) {
+    public void onZoomFinished(Runnable zoomFinishedListener) {
         this.zoomFinishedListener = zoomFinishedListener;
     }
 
-    private Consumer<Double> zoomListener;
-    public void setZoomListener(Consumer<Double> zoomListener) {
-        this.zoomListener = zoomListener;
+    private Consumer<Double> zoomedListener;
+    public void onZoomed(Consumer<Double> zoomedListener) {
+        this.zoomedListener = zoomedListener;
     }
 
-    private BiConsumer<Double, Double> doubleTapListener;
-    public void setDoubleTapListener(BiConsumer<Double, Double> doubleTapListener) {
-        this.doubleTapListener = doubleTapListener;
+    private BiConsumer<Double, Double> doubleTappedListener;
+    public void onDoubleTapped(BiConsumer<Double, Double> doubleTappedListener) {
+        this.doubleTappedListener = doubleTappedListener;
     }
 
-    private BiConsumer<Double, Double> touchMoveListener;
-    public void setTouchMoveListener(BiConsumer<Double, Double> touchMoveListener) {
-        this.touchMoveListener = touchMoveListener;
+    private BiConsumer<Double, Double> singleTouchMovedListener;
+    public void onSingleTouchMoved(BiConsumer<Double, Double> singleTouchMovedListener) {
+        this.singleTouchMovedListener = singleTouchMovedListener;
     }
 
-    private BiConsumer<Double, Double> touchReleasedListener;
-    public void setTouchReleasedListener(BiConsumer<Double, Double> touchReleasedListener) {
-        this.touchReleasedListener = touchReleasedListener;
+    private BiConsumer<Double, Double> singleTouchReleasedListener;
+    public void onSingleTouchReleased(BiConsumer<Double, Double> singleTouchReleasedListener) {
+        this.singleTouchReleasedListener = singleTouchReleasedListener;
     }
 
-    public void onTouchPressed(TouchEvent e) {
+    private void onSingleTouchPressed(TouchEvent e) {
         if (e.getTouchCount() == 1) {
             touched = true;
             screenX = e.getTouchPoint().getScreenX();
             screenY = e.getTouchPoint().getScreenY();
             previousScreenX = screenX;
             previousScreenY = screenY;
+            
+            singleTouchPressedListener.accept(screenX, screenY);
         }
     }
 
-    public void onTouchMoved(TouchEvent e) {
+    private void onTouchMoved(TouchEvent e) {
         if (touched && e.getTouchCount() == 1) {
             double dx = e.getTouchPoint().getScreenX() - previousScreenX;
             double dy = e.getTouchPoint().getScreenY() - previousScreenY;
-            touchMoveListener.accept(dx, dy);
+            singleTouchMovedListener.accept(dx, dy);
             previousScreenX = e.getTouchPoint().getScreenX();
             previousScreenY = e.getTouchPoint().getScreenY();
         }
     }
 
-    public void onTouchReleased(TouchEvent e) {
+    private void onTouchReleased(TouchEvent e) {
         if (touched && e.getTouchCount() == 1) {
             double dx = e.getTouchPoint().getScreenX() - screenX;
             double dy = e.getTouchPoint().getScreenY() - screenY;
-            touchReleasedListener.accept(dx, dy);
+            singleTouchReleasedListener.accept(dx, dy);
         }
 
         touched = false;
     }
 
-    public void onMouseClicked(MouseEvent e) {
+    private void onMouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-            doubleTapListener.accept(e.getScreenX(), e.getScreenY());
+            doubleTappedListener.accept(e.getScreenX(), e.getScreenY());
         }
     }
 
-    public void onZoom(ZoomEvent e) {
-        zoomListener.accept(e.getZoomFactor());
+    private void onZoomed(ZoomEvent e) {
+        zoomedListener.accept(e.getZoomFactor());
     }
 
-    public void onZoomFinished() {
+    private void onZoomFinished() {
         zoomFinishedListener.run();
     }
 }

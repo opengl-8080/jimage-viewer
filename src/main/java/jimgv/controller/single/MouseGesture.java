@@ -12,27 +12,34 @@ public class MouseGesture {
     private boolean rightClicked;
     private double previousScreenX;
     private double previousScreenY;
-    private BiConsumer<Double, Double> leftDragListener;
-    private Consumer<Double> rightScrollListener;
-    private Consumer<Double> scrollListener;
-    private BiConsumer<Double, Double> mousePressedListener;
 
+    public void bind(Node root) {
+        root.setOnMouseReleased(e -> onMouseReleased());
+        root.setOnMouseDragged(this::onMouseDragged);
+        root.setOnScroll(this::onScrolled);
+        root.setOnMousePressed(this::onMousePressed);
+    }
+    
+    private BiConsumer<Double, Double> leftDraggedListener;
+    public void onLeftDragged(BiConsumer<Double, Double> leftDraggedListener) {
+        this.leftDraggedListener = leftDraggedListener;
+    }
+    
+    private Consumer<Double> rightScrolledListener;
+    public void onRightScrolled(Consumer<Double> rightScrolledListener) {
+        this.rightScrolledListener = rightScrolledListener;
+    }
+    
+    private Consumer<Double> scrolledListener;
+    public void onScrolled(Consumer<Double> scrolledListener) {
+        this.scrolledListener = scrolledListener;
+    }
+    
+    private BiConsumer<Double, Double> mousePressedListener;
     public void onMousePressed(BiConsumer<Double, Double> mousePressedListener) {
         this.mousePressedListener = mousePressedListener;
     }
     
-    public void onLeftDrag(BiConsumer<Double, Double> leftDragListener) {
-        this.leftDragListener = leftDragListener;
-    }
-
-    public void onRightScroll(Consumer<Double> rightScrollListener) {
-        this.rightScrollListener = rightScrollListener;
-    }
-
-    public void onScroll(Consumer<Double> scrollListener) {
-        this.scrollListener = scrollListener;
-    }
-
     private void onMousePressed(MouseEvent e) {
         leftClicked = e.isPrimaryButtonDown();
         rightClicked = e.isSecondaryButtonDown();
@@ -50,26 +57,19 @@ public class MouseGesture {
         if (leftClicked) {
             double dx = e.getScreenX() - previousScreenX;
             double dy = e.getScreenY() - previousScreenY;
-            leftDragListener.accept(dx, dy);
+            leftDraggedListener.accept(dx, dy);
             previousScreenX = e.getScreenX();
             previousScreenY = e.getScreenY();
         }
     }
     
-    private void onScroll(ScrollEvent e) {
+    private void onScrolled(ScrollEvent e) {
         if (rightClicked) {
-            rightScrollListener.accept(e.getDeltaY());
+            rightScrolledListener.accept(e.getDeltaY());
         }
         
         if (!leftClicked && !rightClicked) {
-            scrollListener.accept(e.getDeltaY());
+            scrolledListener.accept(e.getDeltaY());
         }
-    }
-
-    public void bind(Node root) {
-        root.setOnMouseReleased(e -> onMouseReleased());
-        root.setOnMouseDragged(this::onMouseDragged);
-        root.setOnScroll(this::onScroll);
-        root.setOnMousePressed(this::onMousePressed);
     }
 }

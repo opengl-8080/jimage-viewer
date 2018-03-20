@@ -10,15 +10,21 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
 
     @Override
     protected void initGestureHandlers() {
-        touchGesture.setDoubleTapListener((x, y) -> {
+        touchGesture.bind(root);
+
+        touchGesture.onSingleTouchPressed((x, y) -> {
+            contextMenu.hide();
+        });
+        
+        touchGesture.onDoubleTapped((x, y) -> {
             imageViewModel.reset();
         });
 
-        touchGesture.setTouchMoveListener((dx, dy) -> {
+        touchGesture.onSingleTouchMoved((dx, dy) -> {
             imageViewModel.translate(dx, dy);
         });
         
-        touchGesture.setTouchReleasedListener((dx, dy) -> {
+        touchGesture.onSingleTouchReleased((dx, dy) -> {
             if (!imageViewModel.isZoomed()) {
                 imageViewModel.reset();
                 double rate = Math.abs(dx) / stage.getWidth();
@@ -37,7 +43,7 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
             imageView.setOpacity(1.0);
         });
         
-        touchGesture.setZoomListener(rate -> {
+        touchGesture.onZoomed(rate -> {
             if (rate < 1.0) {
                 imageViewModel.zoomDown();
             } else {
@@ -45,33 +51,8 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
             }
         });
 
-        touchGesture.setZoomFinishedListener(() -> {
+        touchGesture.onZoomFinished(() -> {
             imageViewModel.finishZoom();
-        });
-        
-        root.setOnTouchPressed(e -> {
-            contextMenu.hide();
-            touchGesture.onTouchPressed(e);
-        });
-        
-        root.setOnTouchReleased(e -> {
-            touchGesture.onTouchReleased(e);
-        });
-        
-        root.setOnTouchMoved(e -> {
-            touchGesture.onTouchMoved(e);
-        });
-        
-        root.setOnMouseClicked(e -> {
-            touchGesture.onMouseClicked(e);
-        });
-        
-        root.setOnZoom(e -> {
-            touchGesture.onZoom(e);
-        });
-        
-        root.setOnZoomFinished(e -> {
-            touchGesture.onZoomFinished();
         });
     }
 }
