@@ -62,7 +62,7 @@ public class ImageViewModel {
     /**
      * 画像を１段階拡大する.
      */
-    public void zoomUp() {
+    public void zoomIn() {
         double currentScale = zoomScale.get();
         double scale = currentScale + 0.1;
         if (5.0 < scale) {
@@ -75,7 +75,7 @@ public class ImageViewModel {
     /**
      * 画像を１段階縮小する.
      */
-    public void zoomDown() {
+    public void zoomOut() {
         double currentScale = zoomScale.get();
         double scale = currentScale - 0.1;
         if (scale < 1.0) {

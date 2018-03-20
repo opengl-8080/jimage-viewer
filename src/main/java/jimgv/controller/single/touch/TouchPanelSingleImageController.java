@@ -61,9 +61,9 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
         
         touchGesture.onZoomed(rate -> {
             if (rate < 1.0) {
-                imageViewModel.zoomDown();
+                imageViewModel.zoomOut();
             } else {
-                imageViewModel.zoomUp();
+                imageViewModel.zoomIn();
             }
         });
 

@@ -22,9 +22,9 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
 
         mouseGesture.onRightScrolled(deltaY -> {
             if (deltaY < 0) {
-                imageViewModel.zoomDown();
+                imageViewModel.zoomOut();
             } else {
-                imageViewModel.zoomUp();
+                imageViewModel.zoomIn();
             }
         });
 
