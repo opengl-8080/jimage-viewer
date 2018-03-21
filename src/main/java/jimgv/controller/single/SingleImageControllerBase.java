@@ -40,8 +40,9 @@ public abstract class SingleImageControllerBase implements SingleImageController
         imageViewModel.open(imagePath);
         
         root.setOnContextMenuRequested(e -> {
+            contextMenu.hide();
+            
             if (!imageViewModel.isZooming()) {
-                contextMenu.hide();
                 contextMenu.show(imageView, e.getScreenX(), e.getScreenY());
             }
         });

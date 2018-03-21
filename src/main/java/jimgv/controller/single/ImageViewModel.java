@@ -85,6 +85,7 @@ public class ImageViewModel {
             scale = 5.0;
         }
         zoomScale.set(scale);
+        zooming = true;
     }
 
     /**
@@ -110,6 +111,7 @@ public class ImageViewModel {
             scale = 1.0;
         }
         zoomScale.set(scale);
+        zooming = true;
     }
 
     /**
