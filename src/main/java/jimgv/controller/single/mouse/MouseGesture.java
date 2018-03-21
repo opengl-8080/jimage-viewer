@@ -14,12 +14,12 @@ public class MouseGesture {
     private double previousScreenY;
 
     public void bind(Node root) {
-        root.setOnMouseReleased(e -> onMouseReleased());
+        root.setOnMouseReleased(this::onMouseReleased);
         root.setOnMouseDragged(this::onMouseDragged);
         root.setOnScroll(this::onScrolled);
         root.setOnMousePressed(this::onMousePressed);
     }
-    
+
     private BiConsumer<Double, Double> leftDraggedListener;
     public void onLeftDragged(BiConsumer<Double, Double> leftDraggedListener) {
         this.leftDraggedListener = leftDraggedListener;
@@ -48,7 +48,7 @@ public class MouseGesture {
         mousePressedListener.accept(e.getScreenX(), e.getScreenY());
     }
     
-    private void onMouseReleased() {
+    private void onMouseReleased(MouseEvent e) {
         leftClicked = false;
         rightClicked = false;
     }

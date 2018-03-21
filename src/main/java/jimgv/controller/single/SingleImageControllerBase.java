@@ -45,6 +45,8 @@ public abstract class SingleImageControllerBase implements SingleImageController
             if (!imageViewModel.isZooming()) {
                 contextMenu.show(imageView, e.getScreenX(), e.getScreenY());
             }
+
+            imageViewModel.finishZoom();
         });
 
         initGestureHandlers();

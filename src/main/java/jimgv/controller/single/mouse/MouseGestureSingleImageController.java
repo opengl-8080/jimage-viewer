@@ -10,7 +10,6 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
         mouseGesture.bind(root);
 
         mouseGesture.onMousePressed((x, y) -> {
-            imageViewModel.finishZoom();
             contextMenu.hide();
         });
         
