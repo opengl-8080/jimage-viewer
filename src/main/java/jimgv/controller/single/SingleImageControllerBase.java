@@ -16,7 +16,7 @@ public abstract class SingleImageControllerBase implements SingleImageController
     @FXML
     protected Node root;
     @FXML
-    protected ImageView imageView;
+    private ImageView imageView;
 
     protected ContextMenu contextMenu = new ContextMenu();
     protected ImageViewModel imageViewModel;

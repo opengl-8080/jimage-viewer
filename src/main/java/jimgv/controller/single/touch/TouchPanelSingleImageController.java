@@ -29,34 +29,18 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
             if (imageViewModel.isZoomed()) {
                 imageViewModel.translate(dx, dy);
             } else {
-                double rate = Math.abs(imageView.getTranslateX()) / stage.getWidth();
-
-                if (rate < DX_FROM) {
-                    imageView.setOpacity(1.0);
-                } else if (DX_FROM <= rate && rate < DX_TO) {
-                    imageView.setOpacity(DY*(DX_TO-rate)/DX + OPACITY_TO);
-                } else {
-                    imageView.setOpacity(OPACITY_TO);
-                }
                 imageViewModel.translate(dx, 0);
+                animateMovingPage();
             }
         });
         
         touchGesture.onSingleTouchReleased((dx, dy) -> {
             if (!imageViewModel.isZoomed()) {
+                movePage();
                 imageViewModel.reset();
-                double rate = Math.abs(dx) / stage.getWidth();
-
-                if (DX_FROM < rate) {
-                    if (dx < 0) {
-                        imageViewModel.loadPreviousImage();
-                    } else {
-                        imageViewModel.loadNextImage();
-                    }
-                }
             }
 
-            imageView.setOpacity(1.0);
+            imageViewModel.setOpacity(1.0);
         });
         
         touchGesture.onZoomed(zoomFactor -> {
@@ -66,5 +50,31 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
         touchGesture.onZoomFinished(() -> {
             imageViewModel.finishZoom();
         });
+    }
+
+    private void animateMovingPage() {
+        double movedRate = Math.abs(imageViewModel.getTranslateX()) / stage.getWidth();
+
+        if (movedRate < DX_FROM) {
+            imageViewModel.setOpacity(1.0);
+        } else if (DX_FROM <= movedRate && movedRate < DX_TO) {
+            imageViewModel.setOpacity(DY*(DX_TO-movedRate)/DX + OPACITY_TO);
+        } else {
+            imageViewModel.setOpacity(OPACITY_TO);
+        }
+    }
+
+    private void movePage() {
+        double movedRate = Math.abs(imageViewModel.getTranslateX()) / stage.getWidth();
+
+        if (movedRate <= DX_FROM) {
+            return;
+        }
+
+        if (imageViewModel.getTranslateX() < 0) {
+            imageViewModel.loadPreviousImage();
+        } else {
+            imageViewModel.loadNextImage();
+        }
     }
 }

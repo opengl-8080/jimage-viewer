@@ -140,4 +140,21 @@ public class ImageViewModel {
         imageView.setTranslateX(imageView.getTranslateX() + dx);
         imageView.setTranslateY(imageView.getTranslateY() + dy);
     }
+
+    /**
+     * 画像の横軸方向の現在の移動量を取得する.
+     * @return 横軸方向の移動量
+     */
+    public double getTranslateX() {
+        return imageView.getTranslateX();
+    }
+
+
+    /**
+     * 不透明度を設定する
+     * @param rate 不透明度(0.0-1.0)
+     */
+    public void setOpacity(double rate) {
+        imageView.setOpacity(rate);
+    }
 }
