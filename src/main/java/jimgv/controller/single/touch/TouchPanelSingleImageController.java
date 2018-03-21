@@ -4,7 +4,15 @@ import jimgv.controller.single.SingleImageControllerBase;
 
 public class TouchPanelSingleImageController extends SingleImageControllerBase {
     private TouchGesture touchGesture = new TouchGesture();
-
+    
+    private static final double OPACITY_FROM = 0.5;
+    private static final double OPACITY_TO = 0.2;
+    private static final double DY = OPACITY_FROM - OPACITY_TO;
+    
+    private static final double DX_FROM = 0.15;
+    private static final double DX_TO = 0.4;
+    private static final double DX = DX_TO - DX_FROM;
+    
     @Override
     protected void initGestureHandlers() {
         touchGesture.bind(root);
@@ -18,25 +26,19 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
         });
 
         touchGesture.onSingleTouchMoved((dx, dy) -> {
-            if (!imageViewModel.isZoomed()) {
+            if (imageViewModel.isZoomed()) {
+                imageViewModel.translate(dx, dy);
+            } else {
                 double rate = Math.abs(imageView.getTranslateX()) / stage.getWidth();
 
-                double Ys = 0.5;
-                double Ye = 0.2;
-                double Xs = 0.15;
-                double Xe = 0.4;
-                double DX = Xe-Xs;
-                double DY = Ys-Ye;
-                if (rate < Xs) {
+                if (rate < DX_FROM) {
                     imageView.setOpacity(1.0);
-                } else if (Xs <= rate && rate < Xe) {
-                    imageView.setOpacity(DY*(Xe-rate)/DX + Ye);
+                } else if (DX_FROM <= rate && rate < DX_TO) {
+                    imageView.setOpacity(DY*(DX_TO-rate)/DX + OPACITY_TO);
                 } else {
-                    imageView.setOpacity(Ye);
+                    imageView.setOpacity(OPACITY_TO);
                 }
                 imageViewModel.translate(dx, 0);
-            } else {
-                imageViewModel.translate(dx, dy);
             }
         });
         
@@ -45,9 +47,7 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
                 imageViewModel.reset();
                 double rate = Math.abs(dx) / stage.getWidth();
 
-                double E = 0.15;
-
-                if (E < rate) {
+                if (DX_FROM < rate) {
                     if (dx < 0) {
                         imageViewModel.loadPreviousImage();
                     } else {
