@@ -92,26 +92,14 @@ public class ImageViewModel {
      * 画像を１段階拡大する.
      */
     public void zoomIn() {
-        double currentScale = zoomScale.get();
-        double scale = currentScale + 0.1;
-        if (5.0 < scale) {
-            scale = 5.0;
-        }
-        zoomScale.set(scale);
-        zooming = true;
+        zoom(1.1);
     }
 
     /**
      * 画像を１段階縮小する.
      */
     public void zoomOut() {
-        double currentScale = zoomScale.get();
-        double scale = currentScale - 0.1;
-        if (scale < 1.0) {
-            scale = 1.0;
-        }
-        zoomScale.set(scale);
-        zooming = true;
+        zoom(0.9);
     }
 
     /**
