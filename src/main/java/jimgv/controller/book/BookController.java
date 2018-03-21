@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -12,23 +13,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import jimgv.model.ImageFile;
+import jimgv.model.book.Book;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class BookController {
     public void initStage(Stage stage) {
-        leftPane.prefWidthProperty().bind(stage.widthProperty().divide(2));
+        leftPane.prefWidthProperty().bind(stage.widthProperty().multiply(0.49));
         leftPane.prefHeightProperty().bind(stage.heightProperty());
         leftImageView.fitWidthProperty().bind(leftPane.prefWidthProperty());
         leftImageView.fitHeightProperty().bind(leftPane.prefHeightProperty());
 
-        rightPane.prefWidthProperty().bind(stage.widthProperty().divide(2));
+        rightPane.prefWidthProperty().bind(stage.widthProperty().multiply(0.49));
         rightPane.prefHeightProperty().bind(stage.heightProperty());
         rightImageView.fitWidthProperty().bind(rightPane.prefWidthProperty());
         rightImageView.fitHeightProperty().bind(rightPane.prefHeightProperty());
@@ -56,36 +52,24 @@ public class BookController {
     @FXML
     private ImageView rightImageView;
     
-    private List<Path> imageList;
-    private int rightIndex;
+    private Book book;
     
     public void open(Path bookDirectory) {
-        try {
-            imageList = Files.list(bookDirectory)
-                            .filter(ImageFile::isImageFile)
-                            .sorted()
-                            .collect(Collectors.toList());
-            
-            if (imageList.isEmpty()) {
-                return;
-            }
-            
-            loadImages();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        book = new Book(bookDirectory);
+        loadImages();
     }
     
     private void loadImages() {
         rightImageView.setImage(null);
         leftImageView.setImage(null);
         
-        loadImage(rightImageView, imageList.get(rightIndex));
+        book.getRightImage().ifPresent(rightImage -> {
+            loadImage(rightImageView, rightImage);
+        });
         
-        int leftIndex = rightIndex + 1;
-        if (leftIndex < imageList.size()) {
-            loadImage(leftImageView, imageList.get(leftIndex));
-        }
+        book.getLeftImage().ifPresent(leftImage -> {
+            loadImage(leftImageView, leftImage);
+        });
     }
     
     private void loadImage(ImageView imageView, Path imagePath) {
@@ -99,27 +83,10 @@ public class BookController {
     public void onScroll(ScrollEvent e) {
         double delta = e.getDeltaY();
         if (delta < 0) {
-            previousPage();
+            book.previousPage();
         } else {
-            nextPage();
+            book.nextPage();
         }
-    }
-    
-    private void previousPage() {
-        rightIndex -= 2;
-        if (rightIndex < 0) {
-            rightIndex = 0;
-        }
-        
-        loadImages();
-    }
-    
-    private void nextPage() {
-        rightIndex += 2;
-        if (imageList.size() <= rightIndex) {
-            rightIndex = imageList.size() - 1;
-        }
-        
         loadImages();
     }
     
@@ -127,6 +94,15 @@ public class BookController {
         ContextMenu contextMenu = new ContextMenu();
         
         addMenuItem(contextMenu, "全画面", e -> stage.setFullScreen(!stage.isFullScreen()));
+        contextMenu.getItems().add(new SeparatorMenuItem());
+
+        CheckMenuItem startOnLeftMenuItem = new CheckMenuItem("左ページ始まり");
+        startOnLeftMenuItem.selectedProperty().addListener((a, b, startOnLeft) -> {
+            book.setStartOnLeft(startOnLeft);
+            loadImages();
+        });
+        contextMenu.getItems().add(startOnLeftMenuItem);
+        
         contextMenu.getItems().add(new SeparatorMenuItem());
         addMenuItem(contextMenu, "閉じる", e -> stage.close());
         
