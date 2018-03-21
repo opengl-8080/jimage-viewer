@@ -1,9 +1,11 @@
 package jimgv.controller;
 
 import javafx.fxml.FXML;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jimgv.Config;
+import jimgv.controller.book.BookWindow;
 import jimgv.controller.single.SingleImageController;
 import jimgv.controller.single.SingleImageWindow;
 import jimgv.controller.single.mouse.MouseGestureSingleImageController;
@@ -37,9 +39,26 @@ public class MainController {
             SingleImageWindow.open(file.toPath(), controller);
         }
     }
+    
+    @FXML
+    public void openBook() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        Config.getInstance().getLastOpenedBookDirectory().ifPresent(lastOpenedBookDirectory -> {
+            chooser.setInitialDirectory(lastOpenedBookDirectory.toFile());
+        });
+
+        File directory = chooser.showDialog(this.stage);
+        if (directory != null) {
+            Config.getInstance().setLastOpenedBookDirectory(directory.toPath());
+            BookWindow.open(directory.toPath());
+        }
+    }
 
     public void setStage(Stage stage) {
         this.stage = stage;
-        stage.setOnCloseRequest(e -> SingleImageWindow.closeAll());
+        stage.setOnCloseRequest(e -> {
+            SingleImageWindow.closeAll();
+            BookWindow.closeAll();
+        });
     }
 }

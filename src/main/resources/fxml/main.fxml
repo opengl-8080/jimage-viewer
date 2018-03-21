@@ -7,5 +7,6 @@
    <children>
       <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openForMouse" text="Mouse" />
       <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openForTouchPanel" text="Touch Panel" />
+      <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#openBook" text="Book" />
    </children>
 </VBox>

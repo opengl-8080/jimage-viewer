@@ -1,15 +1,15 @@
 package jimgv.model.single;
 
+import jimgv.model.ImageFile;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OpenedDirectory {
-    private static final List<String> IMAGE_EXTENSTIONS = Arrays.asList(".png", ".jpg", ".jpeg", ".gif");
     private final List<Path> imagePathList;
     private int currentSelectedIndex;
     
@@ -18,15 +18,7 @@ public class OpenedDirectory {
         try {
             imagePathList = Files.list(directory)
                     .filter(Files::isRegularFile)
-                    .filter(path -> {
-                        String fileName = path.getFileName().toString().toLowerCase();
-                        int lastIndex = fileName.lastIndexOf(".");
-                        if (lastIndex == -1) {
-                            return false;
-                        }
-                        String extension = fileName.substring(lastIndex);
-                        return IMAGE_EXTENSTIONS.contains(extension);
-                    })
+                    .filter(ImageFile::isImageFile)
                     .sorted()
                     .collect(Collectors.toList());
             currentSelectedIndex = imagePathList.indexOf(imagePath);

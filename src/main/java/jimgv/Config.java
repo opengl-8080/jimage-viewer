@@ -14,6 +14,7 @@ import java.util.Properties;
 public class Config {
     private static final Path CONFIG_FILE = Paths.get("./jimage-viewer.xml");
     private static final String LAST_OPENED_DIRECTORY = "last-opened-directory";
+    private static final String LAST_OPENED_BOOK_DIRECTORY = "last-opened-book-directory";
     
     public static Config getInstance() {
         return Config.instance;
@@ -21,6 +22,20 @@ public class Config {
 
     private static final Config instance = new Config();
     private final Properties prop = new Properties();
+
+    public Optional<Path> getLastOpenedBookDirectory() {
+        String directory = this.prop.getProperty(LAST_OPENED_BOOK_DIRECTORY);
+        if (directory != null) {
+            return Optional.of(Paths.get(directory));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public void setLastOpenedBookDirectory(Path path) {
+        this.prop.setProperty(LAST_OPENED_BOOK_DIRECTORY, path.toString());
+        this.save();
+    }
     
     public Optional<Path> getLastOpenedDirectory() {
         String directory = this.prop.getProperty(LAST_OPENED_DIRECTORY);
