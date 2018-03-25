@@ -35,9 +35,14 @@ public class MouseGesture {
         this.scrolledListener = scrolledListener;
     }
     
-    private BiConsumer<Double, Double> mousePressedListener;
-    public void onMousePressed(BiConsumer<Double, Double> mousePressedListener) {
+    private Consumer<MouseEvent> mousePressedListener;
+    public void onMousePressed(Consumer<MouseEvent> mousePressedListener) {
         this.mousePressedListener = mousePressedListener;
+    }
+    
+    private Consumer<MouseEvent> mouseReleasedListener;
+    public void onMouseReleased(Consumer<MouseEvent> mouseEventConsumer) {
+        this.mouseReleasedListener = mouseEventConsumer;
     }
     
     private void onMousePressed(MouseEvent e) {
@@ -45,12 +50,13 @@ public class MouseGesture {
         rightClicked = e.isSecondaryButtonDown();
         previousScreenX = e.getScreenX();
         previousScreenY = e.getScreenY();
-        mousePressedListener.accept(e.getScreenX(), e.getScreenY());
+        mousePressedListener.accept(e);
     }
     
     private void onMouseReleased(MouseEvent e) {
         leftClicked = false;
         rightClicked = false;
+        mouseReleasedListener.accept(e);
     }
     
     private void onMouseDragged(MouseEvent e) {

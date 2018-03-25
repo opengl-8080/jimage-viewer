@@ -17,6 +17,11 @@ public class TouchPanelSingleImageController extends SingleImageControllerBase {
     protected void initGestureHandlers() {
         touchGesture.bind(root);
 
+        root.setOnContextMenuRequested(e -> {
+            contextMenu.hide();
+            contextMenu.show(root, e.getScreenX(), e.getScreenY());
+        });
+        
         touchGesture.onSingleTouchPressed((x, y) -> {
             contextMenu.hide();
         });
