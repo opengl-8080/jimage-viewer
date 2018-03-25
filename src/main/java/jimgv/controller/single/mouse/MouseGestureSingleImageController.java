@@ -49,6 +49,7 @@ public class MouseGestureSingleImageController extends SingleImageControllerBase
             } else {
                 imageViewModel.zoomIn();
             }
+            imageViewModel.finishZoom();
         });
     }
 }
