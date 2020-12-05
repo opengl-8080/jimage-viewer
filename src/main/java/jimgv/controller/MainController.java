@@ -1,5 +1,7 @@
 package jimgv.controller;
 
+import gl.javafx.FxmlPath;
+import gl.javafx.InitializeStage;
 import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -13,14 +15,15 @@ import jimgv.controller.single.touch.TouchPanelSingleImageController;
 
 import java.io.File;
 
-public class MainController {
+@FxmlPath("/fxml/main.fxml")
+public class MainController implements InitializeStage {
     private Stage stage;
     
     @FXML
     public void openForMouse() {
         openImage(new MouseGestureSingleImageController());
     }
-    
+
     @FXML
     public void openForTouchPanel() {
         openImage(new TouchPanelSingleImageController());
@@ -54,6 +57,7 @@ public class MainController {
         }
     }
 
+    @Override
     public void setStage(Stage stage) {
         this.stage = stage;
         stage.setOnCloseRequest(e -> {

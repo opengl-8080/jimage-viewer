@@ -1,23 +1,39 @@
-apply plugin: 'java'
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.beryx.jlink' version '2.12.0'
+}
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+javafx {
+    version = "11"
+    modules = [ 'javafx.fxml', 'javafx.controls', 'javafx.graphics' ]
+}
 
-compileJava*.options*.encoding = 'UTF-8'
+mainClassName = 'jimgv.Main'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:3.5.2'
-    testCompile 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.1'
+    implementation "gl:gl-javafx:1.0.0"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.0"
+    testImplementation "org.assertj:assertj-core:3.17.2"
 }
 
-jar {
-    baseName = 'jimage-viewer'
-    manifest {
-        attributes('Main-Class': 'jimgv.Main')
+test {
+    useJUnitPlatform()
+}
+
+jlink {
+    launcher {
+        name = 'jimage-viewer'
     }
 }

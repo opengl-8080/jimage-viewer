@@ -1,0 +1,15 @@
+.label {
+    -fx-font-size: 20pt;
+}
+
+.button {
+    -fx-font-size: 15pt;
+}
+
+.text-field {
+    -fx-font-size: 12pt;
+}
+
+.error {
+    -fx-effect: dropshadow(gaussian, red, 10, 0.0, 0, 0); 
+}
