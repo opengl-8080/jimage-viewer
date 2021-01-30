@@ -25,6 +25,6 @@ public class ImageFile {
         }
         
         String extension = name.substring(dotIndex);
-        return EXTENSIONS.contains(extension);
+        return EXTENSIONS.contains(extension.toLowerCase());
     }
 }
