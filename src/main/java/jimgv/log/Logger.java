@@ -22,7 +22,7 @@ public class Logger {
     public void debug(Supplier<String> messageSupplier) {
         if (this.level.isEnable(LogLevel.DEBUG)) {
             final String message = messageSupplier.get();
-            debug(message);
+            log("DEBUG", message);
         }
     }
 
