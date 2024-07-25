@@ -4,11 +4,14 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.ZoomEvent;
+import jimgv.log.Logger;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class TouchGesture {
+    private static final Logger logger = Logger.INSTANCE;
+
     private boolean touched;
     private double screenX;
     private double screenY;
@@ -55,6 +58,8 @@ public class TouchGesture {
     }
 
     private void onSingleTouchPressed(TouchEvent e) {
+        logger.debug(() -> "onSingleTouchPressed(touchCount=" + e.getTouchCount() + ")");
+
         if (e.getTouchCount() == 1) {
             touched = true;
             screenX = e.getTouchPoint().getScreenX();
@@ -67,6 +72,7 @@ public class TouchGesture {
     }
 
     private void onTouchMoved(TouchEvent e) {
+        logger.debug(() -> "onTouchMoved");
         if (touched && e.getTouchCount() == 1) {
             double dx = e.getTouchPoint().getScreenX() - previousScreenX;
             double dy = e.getTouchPoint().getScreenY() - previousScreenY;
@@ -77,6 +83,7 @@ public class TouchGesture {
     }
 
     private void onTouchReleased(TouchEvent e) {
+        logger.debug(() -> "onTouchReleased");
         if (touched && e.getTouchCount() == 1) {
             double dx = e.getTouchPoint().getScreenX() - screenX;
             double dy = e.getTouchPoint().getScreenY() - screenY;
@@ -87,6 +94,7 @@ public class TouchGesture {
     }
 
     private void onMouseClicked(MouseEvent e) {
+        logger.debug(() -> "onMouseClicked(clickCount=" + e.getClickCount() + ")");
         if (e.getClickCount() == 2) {
             doubleTappedListener.accept(e.getScreenX(), e.getScreenY());
         }
